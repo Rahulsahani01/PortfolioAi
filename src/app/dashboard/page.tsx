@@ -216,10 +216,7 @@ export default function UserDashboard() {
               <h3 className={styles.bentoTitle}>Live Preview (Mobile)</h3>
               <div className={styles.previewArea}>
                 <div className={styles.phoneFrame}>
-                  <div className="flex-center" style={{ width: '100%', height: '100%', backgroundColor: '#f1f5f9', color: '#64748b', flexDirection: 'column', gap: '8px' }}>
-                    <span className="material-symbols-outlined" style={{ fontSize: '32px' }}>smartphone</span>
-                    <span style={{ fontSize: '12px', fontWeight: '500' }}>Preview Screen</span>
-                  </div>
+                    <img src="/portfolio-mobile-preview.png" alt="Live Mobile Preview" className={styles.phoneImage} />
                 </div>
               </div>
             </div>

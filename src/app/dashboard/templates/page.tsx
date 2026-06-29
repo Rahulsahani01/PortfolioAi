@@ -144,22 +144,7 @@ export default function TemplatesPage() {
                   )}
 
                   <div className={styles.imageWrapper}>
-                    <div
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: '#cbd5e1',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#475569',
-                        flexDirection: 'column',
-                        gap: '8px'
-                      }}
-                    >
-                      <span className="material-symbols-outlined" style={{ fontSize: '32px' }}>view_quilt</span>
-                      <span style={{ fontSize: '12px', fontWeight: '600' }}>{template.title}</span>
-                    </div>
+                    <img src={template.imageSrc} alt={template.title} className={styles.templateImage} />
                     <div className={styles.imageOverlay}>
                       <button className={styles.previewBtn} onClick={(e) => { e.stopPropagation(); router.push('/dashboard/my-site'); }}>
                         <span className="material-symbols-outlined">visibility</span>

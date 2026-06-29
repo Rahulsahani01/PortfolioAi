@@ -80,10 +80,7 @@ export default function Home() {
         <section className={styles.previewSection}>
           <div className={styles.previewContainer}>
             <div className={styles.previewWrapper}>
-              <div className="flex-center" style={{ width: '100%', height: '100%', backgroundColor: '#f1f5f9', color: '#64748b', flexDirection: 'column', gap: '8px' }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '48px' }}>dashboard</span>
-                <span style={{ fontWeight: '600', fontSize: '18px' }}>SaaS Dashboard Preview</span>
-              </div>
+              <img src="/dashboard_preview.png" alt="SaaS Dashboard Preview" className={styles.previewImage} />
               <div className={styles.previewOverlay}></div>
             </div>
           </div>

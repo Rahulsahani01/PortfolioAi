@@ -244,18 +244,9 @@ export default function MySitePage() {
               </div>
 
               <div className={styles.showcaseGrid}>
-                <div style={{ backgroundColor: '#e2e8f0', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '120px' }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '32px', color: '#64748b' }}>laptop</span>
-                  <span style={{ fontSize: '11px', fontWeight: '600', color: '#64748b', marginTop: '8px' }}>Desktop Mockup</span>
-                </div>
-                <div style={{ backgroundColor: '#e2e8f0', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '120px' }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '32px', color: '#64748b' }}>query_stats</span>
-                  <span style={{ fontSize: '11px', fontWeight: '600', color: '#64748b', marginTop: '8px' }}>Analytics Graph</span>
-                </div>
-                <div style={{ backgroundColor: '#e2e8f0', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '120px' }}>
-                  <span className="material-symbols-outlined" style={{ fontSize: '32px', color: '#64748b' }}>group</span>
-                  <span style={{ fontSize: '11px', fontWeight: '600', color: '#64748b', marginTop: '8px' }}>Active Community</span>
-                </div>
+                <img src="/success-laptop-workspace.png" alt="Desktop Mockup" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
+                <img src="/success-analytics-dashboard.png" alt="Analytics Graph" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
+                <img src="/success-creative-collaboration.png" alt="Active Community" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
               </div>
             </div>
           ) : !isPublished ? (
@@ -469,22 +460,7 @@ export default function MySitePage() {
                     </div>
                   </div>
                   <div className={styles.previewCardContent}>
-                    <div
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        backgroundColor: '#cbd5e1',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#475569',
-                        flexDirection: 'column',
-                        gap: '8px'
-                      }}
-                    >
-                      <span className="material-symbols-outlined" style={{ fontSize: '48px' }}>web</span>
-                      <span style={{ fontSize: '14px', fontWeight: '600' }}>Desktop Layout Preview</span>
-                    </div>
+                    <img src="/portfolio-desktop-preview.png" alt="Desktop Layout Preview" className={styles.previewImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     <div className={styles.previewOverlay}>
                       <button className={styles.openLiveBtn} onClick={handleCopyLink}>
                         <span className="material-symbols-outlined">open_in_new</span>
