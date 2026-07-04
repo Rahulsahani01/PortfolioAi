@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(uuid()) @db.Uuid
+  email         String         @unique
+  passwordHash  String
+  isVerified    Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  resumes       Resume[]
+  sites         Site[]
+  subscriptions Subscription[]
+  payments      Payment[]
+}
+
+model Resume {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  fileUrl    String
+  status     String   @default("UPLOADED") // UPLOADED, PARSING, COMPLETED, FAILED
+  parsedData Json?
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+  sites      Site[]
+}
+
+model Site {
+  id             String        @id @default(uuid()) @db.Uuid
+  userId         String        @db.Uuid
+  resumeId       String        @db.Uuid
+  templateKey    String
+  slug           String        @unique
+  status         String        @default("DRAFT") // DRAFT, PUBLISHING, LIVE
+  publishedUrl   String?
+  customData     Json?
+  createdAt      DateTime      @default(now())
+  user           User          @relation(fields: [userId], references: [id])
+  resume         Resume        @relation(fields: [resumeId], references: [id])
+  subscriptionId String?       @unique @db.Uuid
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  payments       Payment[]
+}
+
+model Subscription {
+  id         String    @id @default(uuid()) @db.Uuid
+  userId     String    @db.Uuid
+  planId     String    
+  status     String    @default("ACTIVE") 
+  endDate    DateTime
+  user       User      @relation(fields: [userId], references: [id])
+  site       Site?
+  payments   Payment[]
+}
+
+model Payment {
+  id               String       @id @default(uuid()) @db.Uuid
+  userId           String       @db.Uuid
+  siteId           String       @db.Uuid
+  subscriptionId   String?      @db.Uuid
+  provider         String       @default("MANUAL_UPI")
+  providerId       String?      @unique // Used to store the UTR number
+  amount           Float
+  status           String       @default("PENDING") // PENDING, COMPLETED, REJECTED
+  createdAt        DateTime     @default(now())
+  user             User         @relation(fields: [userId], references: [id])
+  site             Site         @relation(fields: [siteId], references: [id])
+  subscription     Subscription? @relation(fields: [subscriptionId], references: [id])
+}
