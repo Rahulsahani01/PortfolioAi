@@ -52,6 +52,7 @@
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-md) var(--space-lg);
+  border-left: 4px solid transparent;
   color: var(--on-surface-variant);
   text-decoration: none;
   font-size: 12px;
@@ -644,6 +645,7 @@
   cursor: pointer;
   letter-spacing: 0.04em;
   padding: var(--space-md) var(--space-lg);
+  border-left: 4px solid transparent;
   border-radius: var(--radius-base);
   transition: color 0.15s ease, background-color 0.15s ease;
   text-decoration: none;

@@ -51,7 +51,8 @@ model Site {
 model Subscription {
   id         String    @id @default(uuid()) @db.Uuid
   userId     String    @db.Uuid
-  planId     String    
+  paymentId  String    @db.Uuid
+  planType   String    // eg pro, basic, professional
   status     String    @default("ACTIVE") 
   endDate    DateTime
   user       User      @relation(fields: [userId], references: [id])

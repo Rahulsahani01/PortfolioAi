@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Sidebar from '../../../components/Sidebar';
 import styles from './page.module.css';
 
 export default function SettingsPage() {
@@ -52,50 +53,7 @@ export default function SettingsPage() {
   return (
     <div className={styles.shell}>
       {/* ── Sidebar ───────────────────────────────────────── */}
-      <aside className={styles.sidebar}>
-        <div className={styles.sidebarBrand}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <p className={styles.sidebarBrandName}>PortfolioAI</p>
-          </Link>
-          <p className={styles.sidebarPlan}>Premium Plan</p>
-        </div>
-
-        <nav className={styles.sidebarNav}>
-          {[
-            { icon: 'dashboard', label: 'Dashboard', active: false, href: '/dashboard' },
-            { icon: 'description', label: 'My Resume', active: false, href: '/dashboard/resume' },
-            { icon: 'web_stories', label: 'Templates', active: false, href: '/dashboard/templates' },
-            { icon: 'language', label: 'My Site', active: false, href: '/dashboard/my-site' },
-            { icon: 'settings', label: 'Settings', active: true, href: '/dashboard/settings' },
-          ].map(({ icon, label, active, href }) => (
-            <Link
-              key={label}
-              href={href}
-              className={`${styles.navItem} ${active ? styles.navItemActive : ''}`}
-            >
-              <span className={`material-symbols-outlined ${styles.navIcon}`}>{icon}</span>
-              <span>{label}</span>
-            </Link>
-          ))}
-        </nav>
-
-        <div className={styles.createBtnWrapper}>
-          <button className={styles.createBtn} onClick={() => triggerToast('🎨 Initializing website builder...')}>
-            Create New Site
-          </button>
-        </div>
-
-        <div className={styles.sidebarFooter}>
-          <a href="#" className={styles.navItem}>
-            <span className={`material-symbols-outlined ${styles.navIcon}`}>help</span>
-            <span>Help Center</span>
-          </a>
-          <Link href="/auth" className={`${styles.navItem} ${styles.logoutItem}`}>
-            <span className={`material-symbols-outlined ${styles.navIcon}`}>logout</span>
-            <span>Logout</span>
-          </Link>
-        </div>
-      </aside>
+      <Sidebar styles={styles} activePath="/dashboard/settings" />
 
       {/* ── Main Area ─────────────────────────────────────── */}
       <main className={styles.mainArea}>

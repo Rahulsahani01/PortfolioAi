@@ -44,12 +44,14 @@ export const approvePayment = async (req: Request, res: Response, next: NextFunc
         create: {
           userId: payment.userId,
           siteId: payment.siteId,
-          planId: 'pro_yearly',
+          paymentId: payment.id,
+          planType: 'pro',
           status: 'ACTIVE',
           endDate: oneYearFromNow,
         },
         update: {
-          planId: 'pro_yearly',
+          paymentId: payment.id,
+          planType: 'pro',
           status: 'ACTIVE',
           endDate: oneYearFromNow, 
         },

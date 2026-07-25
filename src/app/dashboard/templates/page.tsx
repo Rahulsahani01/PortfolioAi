@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
+import Sidebar from '../../../components/Sidebar';
 import styles from './page.module.css';
 
 interface Template {
@@ -47,60 +49,41 @@ const TEMPLATES: Template[] = [
 export default function TemplatesPage() {
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<string>('modern-dev');
+  const [activeSiteName, setActiveSiteName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const savedSites = localStorage.getItem('mock_portfolio_sites');
+    if (savedSites) {
+      const parsed = JSON.parse(savedSites);
+      const savedActiveId = localStorage.getItem('active_portfolio_site_id');
+      const activeSite = savedActiveId ? parsed.find((s: any) => s.id === savedActiveId) : (parsed.length > 0 ? parsed[0] : null);
+      
+      if (activeSite) {
+        setActiveSiteName(activeSite.name);
+      }
+    }
+  }, []);
 
   const selectedTemplate = TEMPLATES.find(t => t.id === selectedId) || TEMPLATES[0];
 
   return (
     <div className={styles.shell}>
       {/* ── Sidebar ───────────────────────────────────────── */}
-      <aside className={styles.sidebar}>
-        <div className={styles.sidebarBrand}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <p className={styles.sidebarBrandName}>PortfolioAI</p>
-          </Link>
-          <p className={styles.sidebarPlan}>Premium Plan</p>
-        </div>
-
-        <nav className={styles.sidebarNav}>
-          <Link href="/dashboard/resume" className={styles.navItem}>
-            <span className={`material-symbols-outlined ${styles.navIcon}`}>description</span>
-            <span>My Resume</span>
-          </Link>
-          <Link href="/dashboard" className={styles.navItem}>
-            <span className={`material-symbols-outlined ${styles.navIcon}`}>dashboard</span>
-            <span>Dashboard</span>
-          </Link>
-          <Link href="/dashboard/templates" className={`${styles.navItem} ${styles.navItemActive}`}>
-            <span className={`material-symbols-outlined ${styles.navIcon}`}>web_stories</span>
-            <span>Templates</span>
-          </Link>
-          <Link href="/dashboard/my-site" className={styles.navItem}>
-            <span className={`material-symbols-outlined ${styles.navIcon}`}>language</span>
-            <span>My Site</span>
-          </Link>
-          <Link href="/dashboard/settings" className={styles.navItem}>
-            <span className={`material-symbols-outlined ${styles.navIcon}`}>settings</span>
-            <span>Settings</span>
-          </Link>
-        </nav>
-
-        <div className={styles.sidebarFooter}>
-          <a href="#" className={styles.navItem}>
-            <span className={`material-symbols-outlined ${styles.navIcon}`}>help</span>
-            <span>Help Center</span>
-          </a>
-          <Link href="/auth" className={`${styles.navItem} ${styles.logoutItem}`}>
-            <span className={`material-symbols-outlined ${styles.navIcon}`}>logout</span>
-            <span>Logout</span>
-          </Link>
-        </div>
-      </aside>
+      <Sidebar styles={styles} activePath="/dashboard/templates" />
 
       {/* ── Main Area ─────────────────────────────────────── */}
       <main className={styles.mainArea}>
         {/* Top Bar */}
         <header className={styles.topBar}>
-          <h2 className={styles.topBarTitle}>Select a Template</h2>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {activeSiteName ? (
+              <>
+                <ActiveSiteBadge siteName={activeSiteName} />
+              </>
+            ) : (
+              <h2 className={styles.topBarTitle} style={{ margin: 0 }}>Select a Template</h2>
+            )}
+          </div>
           <div className={styles.topBarActions}>
             <div className={styles.searchWrapper}>
               <span className={`material-symbols-outlined ${styles.searchIcon}`}>search</span>

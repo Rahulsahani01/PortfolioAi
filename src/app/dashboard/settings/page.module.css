@@ -52,6 +52,7 @@
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-md) var(--space-lg);
+  border-left: 4px solid transparent;
   color: var(--on-surface-variant);
   text-decoration: none;
   font-size: 12px;

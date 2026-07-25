@@ -2,199 +2,138 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
+import Sidebar from '../../../components/Sidebar';
 import styles from './page.module.css';
 
+type Site = {
+  id: string;
+  name: string;
+  slug: string;
+  status: 'Draft' | 'Live';
+  template: string;
+  resume: string;
+};
+
 export default function MySitePage() {
+  const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // States
-  const [isPublished, setIsPublished] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<'free' | 'pro'>('pro');
-  const [siteHandle, setSiteHandle] = useState('rahul');
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [sites, setSites] = useState<Site[]>([]);
+  const [activeSiteId, setActiveSiteId] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Load from local storage on mount
   useEffect(() => {
-    const published = localStorage.getItem('portfolio_site_published');
-    if (published === 'true') {
-      setIsPublished(true);
-    }
-    const plan = localStorage.getItem('portfolio_site_plan');
-    if (plan === 'free' || plan === 'pro') {
-      setSelectedPlan(plan as 'free' | 'pro');
-    }
-    const slug = localStorage.getItem('portfolio_site_slug');
-    if (slug) {
-      setSiteHandle(slug);
+    const savedSites = localStorage.getItem('mock_portfolio_sites');
+    if (savedSites) {
+      const parsed = JSON.parse(savedSites);
+      setSites(parsed);
+      const savedActiveId = localStorage.getItem('active_portfolio_site_id');
+      if (savedActiveId && parsed.find((s: Site) => s.id === savedActiveId)) {
+        setActiveSiteId(savedActiveId);
+      } else if (parsed.length > 0) {
+        handleSetActiveSite(parsed[0].id);
+      }
     }
   }, []);
 
-  // Save changes helper
-  const updatePublishStatus = (status: boolean) => {
-    setIsPublished(status);
-    localStorage.setItem('portfolio_site_published', status ? 'true' : 'false');
-  };
-
-  const updateSelectedPlan = (plan: 'free' | 'pro') => {
-    setSelectedPlan(plan);
-    localStorage.setItem('portfolio_site_plan', plan);
-  };
-
-  const updateSiteHandle = (slug: string) => {
-    setSiteHandle(slug);
-    localStorage.setItem('portfolio_site_slug', slug);
-  };
-
-  // Confetti handler
-  useEffect(() => {
-    if (!showSuccess || !canvasRef.current) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animationId: number;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const particles: any[] = [];
-    const colors = ['#4648d4', '#6063ee', '#000000', '#dae2fd', '#ba1a1a'];
-
-    for (let i = 0; i < 150; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height - canvas.height,
-        size: Math.random() * 8 + 4,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        speed: Math.random() * 3 + 2,
-        angle: Math.random() * 360,
-      });
+  const handleSetActiveSite = (id: string | null) => {
+    setActiveSiteId(id);
+    if (id) {
+      localStorage.setItem('active_portfolio_site_id', id);
+    } else {
+      localStorage.removeItem('active_portfolio_site_id');
     }
+  };
 
-    function draw() {
-      if (!ctx || !canvas) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((p) => {
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate((p.angle * Math.PI) / 180);
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-        ctx.restore();
-
-        p.y += p.speed;
-        p.angle += 2;
-        if (p.y > canvas.height) p.y = -10;
-      });
-      animationId = requestAnimationFrame(draw);
+  const saveSites = (newSites: Site[]) => {
+    setSites(newSites);
+    localStorage.setItem('mock_portfolio_sites', JSON.stringify(newSites));
+    if (newSites.length === 0) {
+      handleSetActiveSite(null);
+    } else if (activeSiteId && !newSites.find(s => s.id === activeSiteId)) {
+      handleSetActiveSite(newSites[0].id);
     }
-
-    draw();
-
-    return () => {
-      cancelAnimationFrame(animationId);
-    };
-  }, [showSuccess]);
-
-  const handleCheckout = () => {
-    setIsTransitioning(true);
-
-    setTimeout(() => {
-      setIsTransitioning(false);
-      setShowSuccess(true);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 1000);
   };
 
-  const handleConfirmSuccess = () => {
-    setShowSuccess(false);
-    updatePublishStatus(true);
-  };
+  const activeSite = sites.find(s => s.id === activeSiteId);
 
   const handleUnpublish = () => {
+    if (!activeSite) return;
     if (confirm('Are you sure you want to unpublish your portfolio website? It will no longer be visible to the public.')) {
-      updatePublishStatus(false);
+      const updated = sites.map(s => s.id === activeSite.id ? { ...s, status: 'Draft' as const } : s);
+      saveSites(updated);
     }
+  };
+
+  const handleRepublish = () => {
+    if (!activeSite) return;
+    const updated = sites.map(s => s.id === activeSite.id ? { ...s, status: 'Live' as const } : s);
+    saveSites(updated);
+    alert('Site republished successfully!');
   };
 
   const handleDelete = () => {
+    if (!activeSite) return;
     if (confirm('⚠️ WARNING: Deleting your site will permanently remove all content, custom configurations, and DNS settings. This cannot be undone! Proceed?')) {
-      updatePublishStatus(false);
+      const updated = sites.filter(s => s.id !== activeSite.id);
+      saveSites(updated);
+      router.push('/dashboard');
     }
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(`portfolio.company.com/${siteHandle}`);
+    if (!activeSite) return;
+    navigator.clipboard.writeText(`portfolio.ai/${activeSite.slug}`);
     alert('Live link copied to clipboard!');
   };
 
   return (
     <div className={styles.shell}>
       {/* ── Sidebar ───────────────────────────────────────── */}
-      <aside className={styles.sidebar}>
-        <div className={styles.sidebarBrand}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <p className={styles.sidebarBrandName}>PortfolioAI</p>
-          </Link>
-          <p className={styles.sidebarPlan}>Premium Plan</p>
-        </div>
-
-        <nav className={styles.sidebarNav}>
-          {[
-            { icon: 'dashboard', label: 'Dashboard', active: false, href: '/dashboard' },
-            { icon: 'description', label: 'My Resume', active: false, href: '/dashboard/resume' },
-            { icon: 'web_stories', label: 'Templates', active: false, href: '/dashboard/templates' },
-            { icon: 'language', label: 'My Site', active: true, href: '/dashboard/my-site' },
-            { icon: 'settings', label: 'Settings', active: false, href: '/dashboard/settings' },
-          ].map(({ icon, label, active, href }) => (
-            <Link
-              key={label}
-              href={href}
-              className={`${styles.navItem} ${active ? styles.navItemActive : ''}`}
-            >
-              <span className={`material-symbols-outlined ${styles.navIcon}`}>{icon}</span>
-              <span>{label}</span>
-            </Link>
-          ))}
-        </nav>
-
-        <div className={styles.sidebarFooter}>
-          <a href="#" className={styles.navItem}>
-            <span className={`material-symbols-outlined ${styles.navIcon}`}>help</span>
-            <span>Help Center</span>
-          </a>
-          <Link href="/auth" className={`${styles.navItem} ${styles.logoutItem}`}>
-            <span className={`material-symbols-outlined ${styles.navIcon}`}>logout</span>
-            <span>Logout</span>
-          </Link>
-        </div>
-      </aside>
+      <Sidebar styles={styles} activePath="/dashboard/my-site" />
 
       {/* ── Main Area ─────────────────────────────────────── */}
       <main className={styles.mainArea}>
         {/* Top App Bar */}
         <header className={styles.topBar}>
           <div className={styles.topBarTitleGroup}>
-            <h2 className={styles.topBarTitle}>
-              {isPublished && !showSuccess ? 'My Site Management' : 'Publish Your Site'}
-            </h2>
-            {isPublished && !showSuccess && (
-              <div className={styles.topBarBadge}>
-                <span className={styles.topBarBadgeDot} />
-                PUBLISHED
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {activeSite ? (
+                  <ActiveSiteBadge siteName={activeSite.name} />
+                ) : (
+                  <h2 className={styles.topBarTitle} style={{ margin: 0 }}>
+                    My Site Management
+                  </h2>
+                )}
+                {activeSite && activeSite.status === 'Live' && (
+                  <div className={styles.topBarBadge} style={{ backgroundColor: '#d1fae5', color: '#065f46', fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ width: '6px', height: '6px', backgroundColor: '#059669', borderRadius: '50%' }} />
+                    PUBLISHED
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
           <div className={styles.topBarActions}>
-            <div className={styles.searchWrapper}>
-              <span className={`material-symbols-outlined ${styles.searchIcon}`}>search</span>
-              <input
-                className={styles.searchInput}
-                type="text"
-                placeholder="Search templates..."
-              />
-            </div>
+            
+            {/* Site Switcher Dropdown */}
+            {sites.length > 0 && (
+              <select 
+                style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--outline)', outline: 'none', fontWeight: 600, color: 'var(--primary-navy)' }}
+                value={activeSiteId || ''}
+                onChange={(e) => handleSetActiveSite(e.target.value)}
+              >
+                {sites.map(s => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </select>
+            )}
+
             <button className={styles.iconBtn}>
               <span className="material-symbols-outlined">notifications</span>
             </button>
@@ -206,189 +145,17 @@ export default function MySitePage() {
 
         {/* Canvas */}
         <div className={styles.canvas}>
-          {/* Confetti canvas */}
-          {showSuccess && <canvas ref={canvasRef} className={styles.confettiCanvas} />}
-
-          {/* 1. SUCCESS STATE VIEW */}
-          {showSuccess ? (
-            <div className={styles.successContainer}>
-              <div className={styles.successIconBadge}>
-                <span className={`material-symbols-outlined ${styles.successIcon}`}>check_circle</span>
-              </div>
-              <div>
-                <h2 className={styles.successTitle}>It's Official!</h2>
-                <p className={styles.successDesc}>
-                  Your portfolio has been published to the web. Share your new professional home with the world.
-                </p>
-              </div>
-
-              <div className={styles.liveUrlCard}>
-                <div className={styles.liveUrlGrad} />
-                <span className={styles.liveUrlLabel}>Your Live Portfolio URL</span>
-                <div className={styles.liveUrlBar}>
-                  <span className={styles.liveUrlText}>portfolio.company.com/{siteHandle}</span>
-                  <button className={styles.copyUrlBtn} onClick={handleCopyLink}>
-                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>content_copy</span>
-                    Copy
-                  </button>
-                </div>
-              </div>
-
-              <div className={styles.successBtnGroup}>
-                <button className={styles.successPrimaryBtn} onClick={handleConfirmSuccess}>
-                  View Site Dashboard
-                </button>
-                <button className={styles.successSecondaryBtn} onClick={() => setShowSuccess(false)}>
-                  Back to Editor
-                </button>
-              </div>
-
-              <div className={styles.showcaseGrid}>
-                <img src="/success-laptop-workspace.png" alt="Desktop Mockup" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
-                <img src="/success-analytics-dashboard.png" alt="Analytics Graph" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
-                <img src="/success-creative-collaboration.png" alt="Active Community" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
-              </div>
-            </div>
-          ) : !isPublished ? (
-            /* 2. UNPUBLISHED PUBLISH & BILLING VIEW */
-            <div
-              style={{
-                opacity: isTransitioning ? 0.5 : 1,
-                pointerEvents: isTransitioning ? 'none' : 'auto',
-                transition: 'opacity 0.3s ease',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '24px',
-              }}
-            >
-              {/* Step 1 URL slug */}
-              <section className={styles.card}>
-                <div className={styles.sectionTitleGroup}>
-                  <span className={styles.stepNumber}>1</span>
-                  <h3 className={styles.stepTitle}>Claim your custom URL</h3>
-                </div>
-                <div style={{ maxWidth: '576px' }}>
-                  <label className={styles.fieldLabel}>Site Handle</label>
-                  <div className={styles.inputGroup}>
-                    <span className={styles.urlPrefix}>portfolio.company.com/</span>
-                    <input
-                      type="text"
-                      className={`${styles.inputField} ${styles.inputFieldSuccess}`}
-                      value={siteHandle}
-                      onChange={(e) => updateSiteHandle(e.target.value)}
-                    />
-                    <span className={`material-symbols-outlined ${styles.checkIcon}`}>check_circle</span>
-                  </div>
-                  <p className={styles.slugStatus}>
-                    <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>verified</span>
-                    This slug is available!
-                  </p>
-                </div>
-              </section>
-
-              {/* Step 2 Plan selection */}
-              <section>
-                <div className={styles.sectionTitleGroup} style={{ marginBottom: 0 }}>
-                  <span className={styles.stepNumber}>2</span>
-                  <h3 className={styles.stepTitle}>Select your publishing plan</h3>
-                </div>
-
-                <div className={styles.plansGrid}>
-                  {/* Free plan card */}
-                  <div
-                    className={`${styles.planCard} ${selectedPlan === 'free' ? styles.planCardActive : ''}`}
-                    onClick={() => updateSelectedPlan('free')}
-                  >
-                    {selectedPlan === 'free' && (
-                      <span className={`material-symbols-outlined ${styles.planSelectIcon}`}>check_circle</span>
-                    )}
-                    <h4 className={styles.planTitle}>Free</h4>
-                    <p className={styles.planSub}>Best for starting your journey</p>
-                    <div className={styles.planPrice}>
-                      ₹0<span className={styles.planPeriod}>/forever</span>
-                    </div>
-                    <ul className={styles.featuresList}>
-                      <li className={styles.featureItem}>
-                        <span className={`material-symbols-outlined ${styles.featureIcon}`}>check</span>
-                        PortfolioAI Branding
-                      </li>
-                      <li className={styles.featureItem}>
-                        <span className={`material-symbols-outlined ${styles.featureIcon}`}>check</span>
-                        Standard Templates
-                      </li>
-                      <li className={`${styles.featureItem} ${styles.featureItemDisabled}`}>
-                        <span className={`material-symbols-outlined ${styles.featureIcon}`}>close</span>
-                        Custom Domain
-                      </li>
-                    </ul>
-                    <button className={`${styles.planButton} ${selectedPlan === 'free' ? styles.planButtonActive : ''}`}>
-                      {selectedPlan === 'free' ? 'Selected Free' : 'Select Free'}
-                    </button>
-                  </div>
-
-                  {/* Pro plan card */}
-                  <div
-                    className={`${styles.planCard} ${selectedPlan === 'pro' ? styles.planCardActive : ''}`}
-                    onClick={() => updateSelectedPlan('pro')}
-                    style={{ background: 'linear-gradient(to bottom right, #ffffff, rgba(96, 99, 238, 0.05))' }}
-                  >
-                    <div className={styles.popularBadge}>Popular</div>
-                    {selectedPlan === 'pro' && (
-                      <span className={`material-symbols-outlined ${styles.planSelectIcon}`}>check_circle</span>
-                    )}
-                    <h4 className={styles.planTitle}>Pro</h4>
-                    <p className={styles.planSub}>The professional's edge</p>
-                    <div className={styles.planPrice}>
-                      ₹499<span className={styles.planPeriod}>/month</span>
-                    </div>
-                    <ul className={styles.featuresList}>
-                      <li className={styles.featureItem} style={{ fontWeight: '700' }}>
-                        <span className={`material-symbols-outlined ${styles.featureIconStar}`}>star</span>
-                        No Branding
-                      </li>
-                      <li className={styles.featureItem} style={{ fontWeight: '700' }}>
-                        <span className={`material-symbols-outlined ${styles.featureIconStar}`}>star</span>
-                        Custom subdomains
-                      </li>
-                      <li className={styles.featureItem} style={{ fontWeight: '700' }}>
-                        <span className={`material-symbols-outlined ${styles.featureIconStar}`}>star</span>
-                        Analytics Dashboard
-                      </li>
-                    </ul>
-                    <button className={`${styles.planButton} ${selectedPlan === 'pro' ? styles.planButtonActive : ''}`}>
-                      {selectedPlan === 'pro' ? 'Selected Pro' : 'Select Pro'}
-                    </button>
-                  </div>
-                </div>
-              </section>
-
-              {/* Step 3 Checkout button */}
-              <section className={styles.paymentSection}>
-                <div>
-                  <h3 className={styles.paymentTitle}>Ready to go live?</h3>
-                  <p className={styles.paymentDesc}>
-                    {selectedPlan === 'pro'
-                      ? 'You will be redirected to Razorpay for a secure checkout.'
-                      : 'Publish instantly for free under our sub-domain.'}
-                  </p>
-                </div>
-                <button
-                  className={selectedPlan === 'pro' ? styles.razorpayBtn : styles.successPrimaryBtn}
-                  onClick={handleCheckout}
-                >
-                  {selectedPlan === 'pro' && (
-                    <span className="material-symbols-outlined">payments</span>
-                  )}
-                  <span>
-                    {selectedPlan === 'pro'
-                      ? 'Pay ₹499 via Razorpay'
-                      : 'Go Live for Free'}
-                  </span>
-                </button>
-              </section>
+          
+          {!activeSite ? (
+            <div style={{ textAlign: 'center', marginTop: '60px' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: '48px', color: 'var(--on-surface-variant)' }}>language</span>
+              <h3 style={{ color: 'var(--primary-navy)', marginTop: '16px' }}>No Sites Available</h3>
+              <p style={{ color: 'var(--on-surface-variant)', marginBottom: '24px' }}>You haven't created any sites yet.</p>
+              <Link href="/dashboard" style={{ textDecoration: 'none', backgroundColor: 'var(--electric-indigo)', color: 'white', padding: '12px 24px', borderRadius: '8px', fontWeight: 600 }}>
+                Go to Dashboard
+              </Link>
             </div>
           ) : (
-            /* 3. PUBLISHED SITE CONTROLS MANAGEMENT VIEW */
             <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
               {/* Row 1: URL & Actions Control + Visitor Stats */}
               <div className={styles.managementGrid}>
@@ -398,7 +165,7 @@ export default function MySitePage() {
                     <span className={styles.controlLabel}>Live Production URL</span>
                     <div className={styles.urlBar}>
                       <span className={`material-symbols-outlined ${styles.urlIcon}`}>link</span>
-                      <code className={styles.urlText}>portfolio.company.com/{siteHandle}</code>
+                      <code className={styles.urlText}>portfolio.ai/{activeSite.slug}</code>
                       <button className={styles.copyLinkBtn} onClick={handleCopyLink}>
                         <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>content_copy</span>
                         Copy Link
@@ -415,10 +182,17 @@ export default function MySitePage() {
                       <span className="material-symbols-outlined">dashboard_customize</span>
                       Change Template
                     </Link>
-                    <button className={styles.btnOutline} onClick={handleUnpublish}>
-                      <span className="material-symbols-outlined">cloud_off</span>
-                      Unpublish
-                    </button>
+                    {activeSite.status === 'Live' ? (
+                      <button className={styles.btnOutline} onClick={handleUnpublish}>
+                        <span className="material-symbols-outlined">cloud_off</span>
+                        Unpublish
+                      </button>
+                    ) : (
+                      <button className={styles.btnPrimary} onClick={handleRepublish} style={{ backgroundColor: 'var(--primary-navy)' }}>
+                        <span className="material-symbols-outlined">rocket_launch</span>
+                        Publish Now
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -431,15 +205,15 @@ export default function MySitePage() {
                     <span className={styles.statsPeriod}>Last 30 Days</span>
                   </div>
                   <div>
-                    <h3 className={styles.statsValue}>1.2k</h3>
+                    <h3 className={styles.statsValue}>{activeSite.status === 'Live' ? '1.2k' : '0'}</h3>
                     <p className={styles.statsLabel}>Unique Page Views</p>
                   </div>
                   <div className={styles.statsFooter}>
                     <div className={styles.statsUpdateText}>
                       <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>schedule</span>
-                      Updated 2 hours ago
+                      Updated just now
                     </div>
-                    <span className={styles.statsTrend}>+12% ↑</span>
+                    <span className={styles.statsTrend}>{activeSite.status === 'Live' ? '+12% ↑' : '-'}</span>
                   </div>
                 </div>
               </div>
@@ -480,8 +254,8 @@ export default function MySitePage() {
                         <span className="material-symbols-outlined">palette</span>
                       </div>
                       <div>
-                        <p className={styles.themeName}>Modern Dark</p>
-                        <p className={styles.themeVersion}>Version 2.4.0</p>
+                        <p className={styles.themeName}>{activeSite.template}</p>
+                        <p className={styles.themeVersion}>Assigned Resume: {activeSite.resume}</p>
                       </div>
                     </div>
                   </div>
@@ -505,18 +279,14 @@ export default function MySitePage() {
                     <span className={styles.configLabel}>Connected Domains</span>
                     <ul className={styles.domainsList}>
                       <li className={styles.domainItem}>
-                        <span className={styles.domainName}>{siteHandle}design.com</span>
+                        <span className={styles.domainName}>{activeSite.slug}.portfolio.ai</span>
                         <span className={`material-symbols-outlined ${styles.domainCheckIcon}`}>check_circle</span>
                       </li>
                       <li className={`${styles.domainItem} ${styles.domainItemDisabled}`}>
-                        <span className={styles.domainName}>{siteHandle}.me</span>
-                        <span className={styles.domainStatusBadge}>RENEW SOON</span>
+                        <span className={styles.domainName}>{activeSite.slug}.me</span>
+                        <span className={styles.domainStatusBadge}>UPGRADE</span>
                       </li>
                     </ul>
-                    <button className={styles.dnsLink} onClick={() => alert('Opening DNS configuration panels!')}>
-                      Manage DNS Settings
-                      <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>arrow_forward</span>
-                    </button>
                   </div>
                 </div>
               </div>
