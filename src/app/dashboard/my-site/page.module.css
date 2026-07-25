@@ -1338,3 +1338,182 @@
 .footerLink:hover {
   text-decoration: underline;
 }
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modalContent {
+  background-color: var(--surface);
+  width: 100%;
+  max-width: 600px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-level-4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid var(--outline-variant);
+}
+
+.modalTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-navy);
+  margin: 0;
+}
+
+.modalCloseBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--on-surface-variant);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalBody {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.modalFooter {
+  padding: 24px;
+  border-top: 1px solid var(--outline-variant);
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  background-color: var(--surface-container-lowest);
+}
+
+/* Pricing Cards */
+.pricingGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.pricingCard {
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pricingCard:hover {
+  border-color: var(--electric-indigo);
+  background-color: #f5f5ff;
+}
+
+.pricingCardSelected {
+  border: 2px solid var(--electric-indigo);
+  background-color: #e1e0ff;
+  box-shadow: 0 0 0 1px var(--electric-indigo);
+}
+
+.pricingDuration {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pricingCardSelected .pricingDuration {
+  color: var(--primary-navy);
+}
+
+.pricingPrice {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-navy);
+  margin: 0;
+}
+
+/* Input Fields */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-navy);
+}
+
+.textInput {
+  padding: 12px 16px;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--on-surface);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.textInput:focus {
+  border-color: var(--electric-indigo);
+}
+
+.fileInput {
+  padding: 12px;
+  border: 1px dashed var(--outline-variant);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-container-lowest);
+  font-size: 14px;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+}
+
+.fileInput::file-selector-button {
+  background-color: var(--primary-navy);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin-right: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 12px;
+  transition: background-color 0.2s;
+}
+
+.fileInput::file-selector-button:hover {
+  background-color: #07006c;
+}

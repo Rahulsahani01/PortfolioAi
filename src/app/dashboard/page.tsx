@@ -11,7 +11,8 @@ type Site = {
   id: string;
   name: string;
   slug: string;
-  status: 'Draft' | 'Live';
+  status: 'Draft' | 'Live' | 'Under Review' | 'Rejected';
+  offerStatus?: 'None' | 'Pending' | 'Unlocked' | 'Rejected';
   template: string;
   resume: string;
 };
@@ -101,7 +102,7 @@ export default function UserDashboard() {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {activeSite ? (
               <>
-                <ActiveSiteBadge siteName={activeSite.name} />
+                <ActiveSiteBadge siteName={activeSite.name} status={activeSite.status} />
               </>
             ) : (
               <h2 className={styles.topBarTitle}>Dashboard</h2>

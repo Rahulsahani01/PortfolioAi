@@ -16,6 +16,7 @@ export default function ResumePage() {
   const router = useRouter();
   
   const [activeSiteName, setActiveSiteName] = useState<string | null>(null);
+  const [activeSiteStatus, setActiveSiteStatus] = useState<'Draft' | 'Live' | 'Under Review' | 'Rejected' | undefined>(undefined);
 
   useEffect(() => {
     const savedSites = localStorage.getItem('mock_portfolio_sites');
@@ -26,6 +27,7 @@ export default function ResumePage() {
       
       if (activeSite) {
         setActiveSiteName(activeSite.name);
+        setActiveSiteStatus(activeSite.status);
       }
     }
   }, []);
@@ -58,6 +60,24 @@ export default function ResumePage() {
   const removeExperience = (i: number) =>
     setExperience(experience.filter((_, idx) => idx !== i));
 
+  const handleSaveDetails = () => {
+    const savedSites = localStorage.getItem('mock_portfolio_sites');
+    const savedActiveId = localStorage.getItem('active_portfolio_site_id');
+    
+    if (savedSites && savedActiveId) {
+      const parsed = JSON.parse(savedSites);
+      const updatedSites = parsed.map((site: any) => {
+        if (site.id === savedActiveId) {
+          return { ...site, resume: 'Completed' };
+        }
+        return site;
+      });
+      localStorage.setItem('mock_portfolio_sites', JSON.stringify(updatedSites));
+    }
+    
+    alert('Details saved successfully!');
+  };
+
   return (
     <div className={styles.shell}>
       {/* ── Sidebar ───────────────────────────────────────── */}
@@ -70,7 +90,7 @@ export default function ResumePage() {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {activeSiteName ? (
               <>
-                <ActiveSiteBadge siteName={activeSiteName} />
+                <ActiveSiteBadge siteName={activeSiteName} status={activeSiteStatus} />
               </>
             ) : (
               <h2 className={styles.topBarTitle}>Site Details</h2>
@@ -272,7 +292,7 @@ export default function ResumePage() {
               <div className={styles.actionBar}>
                 <div style={{flex: 1}} />
                 <div className={styles.actionBarRight}>
-                  <button className={styles.saveBtn} onClick={() => alert('Details saved successfully!')}>
+                  <button className={styles.saveBtn} onClick={handleSaveDetails}>
                     Save Details
                     <span className="material-symbols-outlined">check</span>
                   </button>

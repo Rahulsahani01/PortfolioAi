@@ -50,6 +50,8 @@ export default function TemplatesPage() {
   const router = useRouter();
   const [selectedId, setSelectedId] = useState<string>('modern-dev');
   const [activeSiteName, setActiveSiteName] = useState<string | null>(null);
+  const [activeSiteStatus, setActiveSiteStatus] = useState<'Draft' | 'Live' | 'Under Review' | 'Rejected' | undefined>(undefined);
+  const [isResumeCompleted, setIsResumeCompleted] = useState<boolean>(false);
 
   useEffect(() => {
     const savedSites = localStorage.getItem('mock_portfolio_sites');
@@ -60,6 +62,8 @@ export default function TemplatesPage() {
       
       if (activeSite) {
         setActiveSiteName(activeSite.name);
+        setActiveSiteStatus(activeSite.status);
+        setIsResumeCompleted(activeSite.resume === 'Completed');
       }
     }
   }, []);
@@ -78,7 +82,7 @@ export default function TemplatesPage() {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {activeSiteName ? (
               <>
-                <ActiveSiteBadge siteName={activeSiteName} />
+                <ActiveSiteBadge siteName={activeSiteName} status={activeSiteStatus} />
               </>
             ) : (
               <h2 className={styles.topBarTitle} style={{ margin: 0 }}>Select a Template</h2>
@@ -185,7 +189,17 @@ export default function TemplatesPage() {
               </div>
             </div>
             <div>
-              <button className={styles.previewDataBtn} onClick={() => router.push('/dashboard/my-site')}>
+              <button 
+                className={styles.previewDataBtn} 
+                onClick={() => {
+                  if (isResumeCompleted) router.push('/dashboard/my-site');
+                }}
+                style={{ 
+                  opacity: isResumeCompleted ? 1 : 0.5, 
+                  cursor: isResumeCompleted ? 'pointer' : 'not-allowed' 
+                }}
+                title={!isResumeCompleted ? "Site details are not completely filled" : ""}
+              >
                 <span className="material-symbols-outlined">play_circle</span>
                 Preview with My Data
               </button>

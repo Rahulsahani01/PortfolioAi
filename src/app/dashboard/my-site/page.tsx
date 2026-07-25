@@ -5,13 +5,15 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
 import Sidebar from '../../../components/Sidebar';
+import PaymentModal from '../../../components/PaymentModal';
 import styles from './page.module.css';
 
 type Site = {
   id: string;
   name: string;
   slug: string;
-  status: 'Draft' | 'Live';
+  status: 'Draft' | 'Live' | 'Under Review' | 'Rejected';
+  offerStatus?: 'None' | 'Pending' | 'Unlocked' | 'Rejected';
   template: string;
   resume: string;
 };
@@ -24,6 +26,9 @@ export default function MySitePage() {
   const [sites, setSites] = useState<Site[]>([]);
   const [activeSiteId, setActiveSiteId] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Payment Modal States
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   // Load from local storage on mount
   useEffect(() => {
@@ -71,9 +76,19 @@ export default function MySitePage() {
 
   const handleRepublish = () => {
     if (!activeSite) return;
-    const updated = sites.map(s => s.id === activeSite.id ? { ...s, status: 'Live' as const } : s);
+    setIsPaymentModalOpen(true);
+  };
+
+  const handleSubmitPayment = (transactionNo: string, screenshotFile: File | null) => {
+    if (!activeSite) return;
+    if (!transactionNo || !screenshotFile) {
+      alert('Please provide both the transaction number and a payment screenshot.');
+      return;
+    }
+    const updated = sites.map(s => s.id === activeSite.id ? { ...s, status: 'Under Review' as const } : s);
     saveSites(updated);
-    alert('Site republished successfully!');
+    setIsPaymentModalOpen(false);
+    alert('Payment details submitted! Your site is under review.');
   };
 
   const handleDelete = () => {
@@ -104,7 +119,9 @@ export default function MySitePage() {
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 {activeSite ? (
-                  <ActiveSiteBadge siteName={activeSite.name} />
+                  <>
+                    <ActiveSiteBadge siteName={activeSite.name} status={activeSite.status} />
+                  </>
                 ) : (
                   <h2 className={styles.topBarTitle} style={{ margin: 0 }}>
                     My Site Management
@@ -324,6 +341,14 @@ export default function MySitePage() {
           </div>
         </footer>
       </main>
+
+      {/* ── Payment Modal ─────────────────────────────────────── */}
+      <PaymentModal 
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        onSubmit={handleSubmitPayment}
+        styles={styles}
+      />
     </div>
   );
 }

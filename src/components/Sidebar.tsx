@@ -28,6 +28,7 @@ export default function Sidebar({ styles, activePath, onCreateSite, disableCreat
           { icon: 'description', label: 'Site Details', href: '/dashboard/resume' },
           { icon: 'web_stories', label: 'Templates', href: '/dashboard/templates' },
           { icon: 'language', label: 'My Site', href: '/dashboard/my-site' },
+          { icon: 'sell', label: 'Pricing', href: '/dashboard/pricing' },
           { icon: 'settings', label: 'Settings', href: '/dashboard/settings' },
         ].map(({ icon, label, href }) => {
           const active = activePath === href;
