@@ -18,7 +18,7 @@ export const upload = multer({
   },
 });
 
-export const parseResume = async (req: Request, res: Response, next: NextFunction) => {
+export const parseSiteDetail = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: { message: 'No file uploaded' } });

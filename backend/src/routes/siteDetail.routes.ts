@@ -1,15 +1,15 @@
 import { Router } from 'express';
-import { upload, parseResume } from '../controllers/resume.controller';
+import { upload, parseSiteDetail } from '../controllers/siteDetail.controller';
 
 const router = Router();
 
 /**
  * @swagger
- * /api/resumes/parse:
+ * /api/site-details/parse:
  *   post:
- *     summary: Upload and parse a resume (Ephemeral Mock Mode)
- *     description: Uploads a PDF resume, parses text in-memory, and returns a mocked JSON structure for frontend form auto-fill testing. Does NOT save to database.
- *     tags: [Resumes]
+ *     summary: Upload and parse a site detail file (Ephemeral Mock Mode)
+ *     description: Uploads a PDF, parses text in-memory, and returns a mocked JSON structure. Does NOT save to database.
+ *     tags: [SiteDetails]
  *     requestBody:
  *       required: true
  *       content:
@@ -27,6 +27,6 @@ const router = Router();
  *       400:
  *         description: Bad request (no file or unsupported type)
  */
-router.post('/parse', upload.single('resume'), parseResume);
+router.post('/parse', upload.single('resume'), parseSiteDetail);
 
 export default router;

@@ -58,13 +58,13 @@ router.get('/', getSites);
  *             required:
  *               - templateKey
  *               - slug
- *               - resumeId
+ *               - siteDetailId
  *             properties:
  *               templateKey:
  *                 type: string
  *               slug:
  *                 type: string
- *               resumeId:
+ *               siteDetailId:
  *                 type: string
  *                 format: uuid
  *     responses:

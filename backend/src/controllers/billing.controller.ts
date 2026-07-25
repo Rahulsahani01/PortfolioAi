@@ -49,14 +49,31 @@ export const verifyPayment = async (req: Request, res: Response, next: NextFunct
       return res.status(400).json({ error: { message: `Payment is already ${payment.status}` } });
     }
 
-    // Save the UTR number for admin review
+    if (!req.file) {
+      return res.status(400).json({ error: { message: 'Screenshot is required' } });
+    }
+
+    // In a real app, upload req.file.buffer to S3/Cloudinary and get URL
+    // For mock purposes, we'll generate a fake URL
+    const screenshotUrl = `https://mock-storage.com/${req.file.originalname}`;
+
+    // Save the UTR number and screenshot URL for admin review
     const updatedPayment = await prisma.payment.update({
       where: { id: paymentId },
-      data: { providerId: utrNumber }, // Storing UTR in providerId
+      data: { 
+        providerId: utrNumber, 
+        screenshotUrl 
+      },
+    });
+
+    // Mark the site as UNDER_REVIEW
+    await prisma.site.update({
+      where: { id: payment.siteId },
+      data: { status: 'UNDER_REVIEW' },
     });
 
     res.status(200).json({
-      message: 'UTR submitted successfully. Awaiting admin approval.',
+      message: 'Payment details submitted successfully. Site is now under review.',
       payment: updatedPayment,
     });
   } catch (error) {

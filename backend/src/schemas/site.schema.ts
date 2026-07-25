@@ -10,9 +10,9 @@ export const createSiteSchema = z.object({
     })
     .min(3, 'Slug must be at least 3 characters long')
     .regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens'),
-    resumeId: z.string({
-      required_error: 'Resume ID is required to link the parsed data',
-    }).uuid('Invalid Resume ID format'),
+    siteDetailId: z.string({
+      required_error: 'Site Detail ID is required to link the parsed data',
+    }).uuid('Invalid Site Detail ID format'),
   }),
 });
 

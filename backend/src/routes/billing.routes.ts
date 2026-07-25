@@ -3,6 +3,7 @@ import { authenticateToken } from '../middleware/auth.middleware';
 import { validateRequest } from '../middleware/validateRequest';
 import { checkoutSchema, verifyPaymentSchema } from '../schemas/billing.schema';
 import { createCheckout, verifyPayment, getBillingStatus } from '../controllers/billing.controller';
+import { uploadImage } from '../middleware/upload.middleware';
 
 const router = Router();
 
@@ -61,7 +62,7 @@ router.post('/checkout', validateRequest(checkoutSchema), createCheckout);
  *       200:
  *         description: UTR submitted successfully
  */
-router.post('/verify', validateRequest(verifyPaymentSchema), verifyPayment);
+router.post('/verify', uploadImage.single('screenshot'), validateRequest(verifyPaymentSchema), verifyPayment);
 
 /**
  * @swagger

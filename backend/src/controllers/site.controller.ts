@@ -33,7 +33,7 @@ export const checkSlug = async (req: Request, res: Response, next: NextFunction)
 export const createSite = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.userId;
-    const { templateKey, slug, resumeId } = req.body;
+    const { templateKey, slug, siteDetailId } = req.body;
 
     // Verify slug uniqueness again before creating
     const existingSite = await prisma.site.findUnique({ where: { slug } });
@@ -44,7 +44,7 @@ export const createSite = async (req: Request, res: Response, next: NextFunction
     const site = await prisma.site.create({
       data: {
         userId,
-        resumeId,
+        siteDetailId,
         templateKey,
         slug,
         status: 'DRAFT',
@@ -111,7 +111,7 @@ export const publishSite = async (req: Request, res: Response, next: NextFunctio
 
     // 2. Ensure it has custom data to publish
     if (!site.customData) {
-      return res.status(400).json({ error: { message: 'Cannot publish site without resume data (customData).' } });
+      return res.status(400).json({ error: { message: 'Cannot publish site without site detail data (customData).' } });
     }
 
     // 3. Update status to PUBLISHING
@@ -125,7 +125,7 @@ export const publishSite = async (req: Request, res: Response, next: NextFunctio
       siteId: site.id,
       slug: site.slug,
       templateKey: site.templateKey,
-      resumeData: site.customData,
+      siteDetailData: site.customData,
     });
 
     // 5. Instantly respond to frontend

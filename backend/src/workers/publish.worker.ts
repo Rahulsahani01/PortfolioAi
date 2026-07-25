@@ -12,7 +12,7 @@ const owner = process.env.GITHUB_REPO_OWNER || '';
 const repo = process.env.GITHUB_REPO_NAME || '';
 
 export const publishWorker = new Worker('site-publish-queue', async (job: Job) => {
-  const { siteId, slug, templateKey, resumeData } = job.data;
+  const { siteId, slug, templateKey, siteDetailData } = job.data;
   const branchName = `feature/site-${siteId}`;
 
   try {
@@ -42,7 +42,7 @@ export const publishWorker = new Worker('site-publish-queue', async (job: Job) =
     }
 
     // 3. Create a Blob for the JSON data file
-    const contentToCommit = JSON.stringify({ templateKey, resumeData }, null, 2);
+    const contentToCommit = JSON.stringify({ templateKey, siteDetailData }, null, 2);
     const { data: blobData } = await octokit.rest.git.createBlob({
       owner,
       repo,

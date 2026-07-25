@@ -8,14 +8,15 @@ import swaggerUi from 'swagger-ui-express';
 import { PrismaClient } from '@prisma/client';
 import { swaggerSpec } from './swagger';
 import authRoutes from './routes/auth.routes';
-import resumeRoutes from './routes/resume.routes';
+import siteDetailRoutes from './routes/siteDetail.routes';
 import siteRoutes from './routes/site.routes';
 import webhookRoutes from './routes/webhook.routes';
 import billingRoutes from './routes/billing.routes';
+import socialOfferRoutes from './routes/socialOffer.routes';
 import adminRoutes from './routes/admin.routes';
 
-// Start background workers
-import './workers/publish.worker';
+// Start background workers (Temporarily disabled because Docker is broken on local machine)
+// import './workers/publish.worker';
 dotenv.config();
 
 const app = express();
@@ -39,10 +40,11 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes will be added here
 app.use('/api/auth', authRoutes);
-app.use('/api/resumes', resumeRoutes);
+app.use('/api/site-details', siteDetailRoutes);
 app.use('/api/sites', siteRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/billing', billingRoutes);
+app.use('/api/social-offers', socialOfferRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Global Error Handler

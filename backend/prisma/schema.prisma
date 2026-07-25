@@ -14,13 +14,13 @@ model User {
   isVerified    Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  resumes       Resume[]
+  siteDetails   SiteDetail[]
   sites         Site[]
   subscriptions Subscription[]
   payments      Payment[]
 }
 
-model Resume {
+model SiteDetail {
   id         String   @id @default(uuid()) @db.Uuid
   userId     String   @db.Uuid
   fileUrl    String
@@ -34,18 +34,19 @@ model Resume {
 model Site {
   id             String        @id @default(uuid()) @db.Uuid
   userId         String        @db.Uuid
-  resumeId       String        @db.Uuid
+  siteDetailId   String        @db.Uuid
   templateKey    String
   slug           String        @unique
-  status         String        @default("DRAFT") // DRAFT, PUBLISHING, LIVE
+  status         String        @default("DRAFT") // DRAFT, UNDER_REVIEW, PUBLISHING, LIVE, REJECTED
   publishedUrl   String?
   customData     Json?
   createdAt      DateTime      @default(now())
   user           User          @relation(fields: [userId], references: [id])
-  resume         Resume        @relation(fields: [resumeId], references: [id])
+  siteDetail     SiteDetail    @relation(fields: [siteDetailId], references: [id])
   subscriptionId String?       @unique @db.Uuid
   subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
   payments       Payment[]
+  socialOffer    SocialOffer?
 }
 
 model Subscription {
@@ -67,10 +68,25 @@ model Payment {
   subscriptionId   String?      @db.Uuid
   provider         String       @default("MANUAL_UPI")
   providerId       String?      @unique // Used to store the UTR number
+  screenshotUrl    String?      // Stores the URL of the uploaded payment proof
   amount           Float
   status           String       @default("PENDING") // PENDING, COMPLETED, REJECTED
   createdAt        DateTime     @default(now())
   user             User         @relation(fields: [userId], references: [id])
   site             Site         @relation(fields: [siteId], references: [id])
   subscription     Subscription? @relation(fields: [subscriptionId], references: [id])
+}
+
+model SocialOffer {
+  id            String   @id @default(uuid()) @db.Uuid
+  siteId        String   @unique @db.Uuid
+  platform      String   // e.g., "LinkedIn", "Twitter/X"
+  handlerName   String   // e.g., "@username"
+  postUrl       String
+  screenshotUrl String
+  status        String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  site          Site     @relation(fields: [siteId], references: [id])
 }
