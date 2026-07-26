@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
@@ -59,10 +59,32 @@ export default function TemplatesPage() {
   const [selectedId, setSelectedId] = useState<string>('modern-dev');
   const [isGenerating, setIsGenerating] = useState(false);
 
+  useEffect(() => {
+    if (activeSite?.templateKey) {
+      setSelectedId(activeSite.templateKey);
+    }
+  }, [activeSite?.templateKey]);
+
+  const activeSiteId = activeSite?.id;
+  const fetchedSiteIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (activeSiteId && fetchedSiteIdRef.current !== activeSiteId) {
+      fetchedSiteIdRef.current = activeSiteId;
+      refreshSites(activeSiteId);
+    }
+  }, [activeSiteId, refreshSites]);
+
   const activeSiteName = activeSite?.slug || slug;
   const activeSiteStatus = activeSite?.status || 'Draft';
   
-  const canGenerate = !!activeSite;
+  const canGenerate = !!activeSite && activeSite?.siteDetail?.status === 'COMPLETED' && activeSite?.paymentStatus !== 'PENDING';
+  const getDisabledReason = () => {
+    if (!activeSite) return 'No active site';
+    if (activeSite.paymentStatus === 'PENDING') return 'Site is under review';
+    if (activeSite.siteDetail?.status !== 'COMPLETED') return 'Complete the site details first';
+    return undefined;
+  };
 
   const handleGenerateSite = async () => {
     if (!canGenerate || !activeSite) return;
@@ -151,7 +173,19 @@ export default function TemplatesPage() {
                   <div className={styles.imageWrapper}>
                     <img src={template.imageSrc} alt={template.title} className={styles.templateImage} />
                     <div className={styles.imageOverlay}>
-                      <button className={styles.previewBtn} onClick={(e) => { e.stopPropagation(); router.push('/dashboard/my-site'); }}>
+                      <button 
+                        className={styles.previewBtn} 
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          if (activeSite?.siteDetail?.status !== 'COMPLETED' || activeSite?.paymentStatus === 'PENDING') return;
+                          router.push('/dashboard/my-site'); 
+                        }}
+                        title={activeSite?.paymentStatus === 'PENDING' ? 'Site is under review' : (activeSite?.siteDetail?.status !== 'COMPLETED' ? 'complete the site details first' : undefined)}
+                        style={{
+                          opacity: (activeSite?.siteDetail?.status !== 'COMPLETED' || activeSite?.paymentStatus === 'PENDING') ? 0.5 : 1,
+                          cursor: (activeSite?.siteDetail?.status !== 'COMPLETED' || activeSite?.paymentStatus === 'PENDING') ? 'not-allowed' : 'pointer'
+                        }}
+                      >
                         <span className="material-symbols-outlined">visibility</span>
                         Preview
                       </button>
@@ -209,12 +243,15 @@ export default function TemplatesPage() {
             <div>
               <button 
                 className={styles.previewDataBtn} 
-                onClick={handleGenerateSite}
-                style={{ 
-                  opacity: canGenerate ? 1 : 0.5, 
-                  cursor: canGenerate ? 'pointer' : 'not-allowed' 
+                onClick={() => {
+                  if (!canGenerate) return;
+                  handleGenerateSite();
                 }}
-                disabled={isGenerating || !canGenerate}
+                style={{ 
+                  opacity: canGenerate && !isGenerating ? 1 : 0.5, 
+                  cursor: canGenerate && !isGenerating ? 'pointer' : 'not-allowed' 
+                }}
+                title={getDisabledReason()}
               >
                 <span className="material-symbols-outlined">
                   publish

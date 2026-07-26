@@ -17,9 +17,10 @@ export default function PaymentModal({ isOpen, onClose, onSubmit, styles, isOffe
 
   if (!isOpen) return null;
 
+  const originalPrices = { sixMo: 500, oneYr: 1000, threeYr: 1500 };
   const prices = isOfferUnlocked 
     ? { sixMo: 250, oneYr: 500, threeYr: 1000 }
-    : { sixMo: 500, oneYr: 1000, threeYr: 1500 };
+    : originalPrices;
 
   const handleSubmit = () => {
     let amount = prices.oneYr;
@@ -60,21 +61,42 @@ export default function PaymentModal({ isOpen, onClose, onSubmit, styles, isOffe
                 onClick={() => setSelectedPlan('6_month')}
               >
                 <span className={styles.pricingDuration}>6 Months</span>
-                <h4 className={styles.pricingPrice}>₹{prices.sixMo}</h4>
+                <h4 className={styles.pricingPrice}>
+                  {isOfferUnlocked && (
+                    <span style={{ textDecoration: 'line-through', color: 'var(--on-surface-variant)', fontSize: '0.7em', marginRight: '8px' }}>
+                      ₹{originalPrices.sixMo}
+                    </span>
+                  )}
+                  ₹{prices.sixMo}
+                </h4>
               </div>
               <div 
                 className={`${styles.pricingCard} ${selectedPlan === '1_year' ? styles.pricingCardSelected : ''}`}
                 onClick={() => setSelectedPlan('1_year')}
               >
                 <span className={styles.pricingDuration}>1 Year</span>
-                <h4 className={styles.pricingPrice}>₹{prices.oneYr}</h4>
+                <h4 className={styles.pricingPrice}>
+                  {isOfferUnlocked && (
+                    <span style={{ textDecoration: 'line-through', color: 'var(--on-surface-variant)', fontSize: '0.7em', marginRight: '8px' }}>
+                      ₹{originalPrices.oneYr}
+                    </span>
+                  )}
+                  ₹{prices.oneYr}
+                </h4>
               </div>
               <div 
                 className={`${styles.pricingCard} ${selectedPlan === '3_year' ? styles.pricingCardSelected : ''}`}
                 onClick={() => setSelectedPlan('3_year')}
               >
                 <span className={styles.pricingDuration}>3 Years</span>
-                <h4 className={styles.pricingPrice}>₹{prices.threeYr}</h4>
+                <h4 className={styles.pricingPrice}>
+                  {isOfferUnlocked && (
+                    <span style={{ textDecoration: 'line-through', color: 'var(--on-surface-variant)', fontSize: '0.7em', marginRight: '8px' }}>
+                      ₹{originalPrices.threeYr}
+                    </span>
+                  )}
+                  ₹{prices.threeYr}
+                </h4>
               </div>
             </div>
           </div>

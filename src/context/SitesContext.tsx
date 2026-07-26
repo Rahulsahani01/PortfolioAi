@@ -18,6 +18,10 @@ export interface Site {
   socialOffer?: {
     status: 'PENDING' | 'APPROVED' | 'REJECTED';
   } | null;
+  siteDetail?: {
+    status: string;
+    parsedData?: any;
+  } | null;
 }
 
 interface SitesContextType {

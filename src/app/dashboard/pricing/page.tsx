@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../../../components/Sidebar';
 import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
 import { useSites } from '../../../context/SitesContext';
@@ -12,6 +12,14 @@ export default function PricingPage() {
   const { activeSite, activeSiteId, refreshSites } = useSites();
   const { token } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const fetchedSiteIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (activeSiteId && fetchedSiteIdRef.current !== activeSiteId) {
+      fetchedSiteIdRef.current = activeSiteId;
+      refreshSites(activeSiteId);
+    }
+  }, [activeSiteId, refreshSites]);
 
   // Form states
   const [socialType, setSocialType] = useState('LinkedIn');
@@ -56,9 +64,10 @@ export default function PricingPage() {
   const isOfferUnlocked = offerStatus === 'APPROVED';
   const isOfferPending = offerStatus === 'PENDING';
 
+  const originalPrices = { sixMo: 500, oneYr: 1000, threeYr: 1500 };
   const prices = isOfferUnlocked 
     ? { sixMo: 250, oneYr: 500, threeYr: 1000 }
-    : { sixMo: 500, oneYr: 1000, threeYr: 1500 };
+    : originalPrices;
 
   return (
     <div className={styles.shell}>
@@ -103,15 +112,36 @@ export default function PricingPage() {
             <div className={styles.pricingGrid}>
               <div className={styles.pricingCard}>
                 <span className={styles.pricingDuration}>6 Months</span>
-                <h4 className={styles.pricingPrice}>₹{prices.sixMo}</h4>
+                <h4 className={styles.pricingPrice}>
+                  {isOfferUnlocked && (
+                    <span style={{ textDecoration: 'line-through', color: 'var(--on-surface-variant)', fontSize: '0.7em', marginRight: '8px' }}>
+                      ₹{originalPrices.sixMo}
+                    </span>
+                  )}
+                  ₹{prices.sixMo}
+                </h4>
               </div>
               <div className={styles.pricingCard} style={{ borderColor: 'var(--electric-indigo)', boxShadow: 'var(--shadow-level-3)' }}>
                 <span className={styles.pricingDuration}>1 Year</span>
-                <h4 className={styles.pricingPrice}>₹{prices.oneYr}</h4>
+                <h4 className={styles.pricingPrice}>
+                  {isOfferUnlocked && (
+                    <span style={{ textDecoration: 'line-through', color: 'var(--on-surface-variant)', fontSize: '0.7em', marginRight: '8px' }}>
+                      ₹{originalPrices.oneYr}
+                    </span>
+                  )}
+                  ₹{prices.oneYr}
+                </h4>
               </div>
               <div className={styles.pricingCard}>
                 <span className={styles.pricingDuration}>3 Years</span>
-                <h4 className={styles.pricingPrice}>₹{prices.threeYr}</h4>
+                <h4 className={styles.pricingPrice}>
+                  {isOfferUnlocked && (
+                    <span style={{ textDecoration: 'line-through', color: 'var(--on-surface-variant)', fontSize: '0.7em', marginRight: '8px' }}>
+                      ₹{originalPrices.threeYr}
+                    </span>
+                  )}
+                  ₹{prices.threeYr}
+                </h4>
               </div>
             </div>
 

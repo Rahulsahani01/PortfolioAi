@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { DUMMY_RESUME } from '../../../data/portfolioData';
@@ -26,6 +26,15 @@ export default function ResumePage() {
   const [activeSiteStatus, setActiveSiteStatus] = useState<'Draft' | 'LIVE' | 'UNDER_REVIEW' | 'REJECTED' | 'PUBLISHING' | undefined>(undefined);
   const [isSaving, setIsSaving] = useState(false);
 
+  const fetchedSiteIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (activeSiteId && fetchedSiteIdRef.current !== activeSiteId) {
+      fetchedSiteIdRef.current = activeSiteId;
+      refreshSites(activeSiteId);
+    }
+  }, [activeSiteId, refreshSites]);
+
   useEffect(() => {
     if (activeSite) {
       setActiveSiteName(activeSite.slug); // We use slug as name
@@ -37,13 +46,35 @@ export default function ResumePage() {
   }, [activeSite, slug]);
 
   // Editor states
-  const [name, setName] = useState(DUMMY_RESUME.name);
-  const [title, setTitle] = useState(DUMMY_RESUME.title);
-  const [skills, setSkills] = useState<Skill[]>(DUMMY_RESUME.skills.slice(0, 3));
+  const [name, setName] = useState('');
+  const [title, setTitle] = useState('');
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [newSkill, setNewSkill] = useState('');
   const [addingSkill, setAddingSkill] = useState(false);
-  const [experience, setExperience] = useState<ExperienceEntry[]>(DUMMY_RESUME.experience);
-  const [education, setEducation] = useState<EducationEntry[]>(DUMMY_RESUME.education);
+  const [experience, setExperience] = useState<ExperienceEntry[]>([]);
+  const [education, setEducation] = useState<EducationEntry[]>([]);
+
+  useEffect(() => {
+    const data = activeSite?.siteDetail?.parsedData;
+    if (data) {
+      let fullName = data.personalInfo?.name;
+      if (!fullName && data.personalInfo?.firstName) {
+        fullName = `${data.personalInfo.firstName} ${data.personalInfo.lastName || ''}`.trim();
+      }
+      setName(fullName || DUMMY_RESUME.name);
+      setTitle(data.personalInfo?.title || DUMMY_RESUME.title);
+      setSkills(data.skills?.length ? data.skills : DUMMY_RESUME.skills.slice(0, 3));
+      setExperience(data.experience?.length ? data.experience : DUMMY_RESUME.experience);
+      setEducation(data.education?.length ? data.education : DUMMY_RESUME.education);
+    } else {
+      // Fallback to empty or dummy if no data
+      setName(DUMMY_RESUME.name);
+      setTitle(DUMMY_RESUME.title);
+      setSkills(DUMMY_RESUME.skills.slice(0, 3));
+      setExperience(DUMMY_RESUME.experience);
+      setEducation(DUMMY_RESUME.education);
+    }
+  }, [activeSite]);
 
   /* ── Drop Zone handlers (hidden but kept if needed later) ───────────────── */
 

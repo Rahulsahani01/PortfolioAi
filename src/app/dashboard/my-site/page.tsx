@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
@@ -13,9 +13,18 @@ import styles from './page.module.css';
 
 export default function MySitePage() {
   const router = useRouter();
-  const { sites, activeSite, setActiveSiteId, refreshSites } = useSites();
+  const { sites, activeSite, activeSiteId, setActiveSiteId, refreshSites } = useSites();
   const { token } = useAuth();
   const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  const fetchedSiteIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (activeSiteId && fetchedSiteIdRef.current !== activeSiteId) {
+      fetchedSiteIdRef.current = activeSiteId;
+      refreshSites(activeSiteId);
+    }
+  }, [activeSiteId, refreshSites]);
 
   // Payment Modal States
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -187,7 +196,19 @@ export default function MySitePage() {
                         Unpublish
                       </button>
                     ) : (
-                      <button className={styles.btnPrimary} onClick={handleRepublish} style={{ backgroundColor: 'var(--primary-navy)' }}>
+                      <button 
+                        className={styles.btnPrimary} 
+                        onClick={() => {
+                          if (activeSite.siteDetail?.status !== 'COMPLETED' || activeSite.paymentStatus === 'PENDING') return;
+                          handleRepublish();
+                        }} 
+                        title={activeSite.paymentStatus === 'PENDING' ? 'Site is under review' : (activeSite.siteDetail?.status !== 'COMPLETED' ? 'complete the site details first' : undefined)}
+                        style={{ 
+                          backgroundColor: 'var(--primary-navy)',
+                          opacity: (activeSite.siteDetail?.status !== 'COMPLETED' || activeSite.paymentStatus === 'PENDING') ? 0.5 : 1,
+                          cursor: (activeSite.siteDetail?.status !== 'COMPLETED' || activeSite.paymentStatus === 'PENDING') ? 'not-allowed' : 'pointer'
+                        }}
+                      >
                         <span className="material-symbols-outlined">rocket_launch</span>
                         Publish Now
                       </button>

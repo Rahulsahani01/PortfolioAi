@@ -19,7 +19,8 @@ export const getSites = async (req: Request, res: Response, next: NextFunction) 
           orderBy: { createdAt: 'desc' },
           take: 1
         },
-        socialOffer: true
+        socialOffer: true,
+        siteDetail: true
       }
     });
     
