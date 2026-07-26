@@ -6,6 +6,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { DUMMY_RESUME } from '../../../data/portfolioData';
 import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
 import Sidebar from '../../../components/Sidebar';
+import EducationModal from '../../../components/EducationModal';
+import ExperienceModal from '../../../components/ExperienceModal';
+import ProjectModal from '../../../components/ProjectModal';
 import { useSites } from '../../../context/SitesContext';
 import { useAuth } from '../../../context/AuthContext';
 import { apiFetch } from '../../../lib/api';
@@ -48,31 +51,70 @@ export default function ResumePage() {
   // Editor states
   const [name, setName] = useState('');
   const [title, setTitle] = useState('');
-  const [skills, setSkills] = useState<Skill[]>([]);
+  const [summary, setSummary] = useState('');
+  const [profilePhoto, setProfilePhoto] = useState('');
+  const [contact, setContact] = useState({ email: '', phone: '', location: '' });
+  const [social, setSocial] = useState({ github: '', linkedin: '', twitter: '', portfolioUrl: '', leetcode: '', hackerrank: '' });
+  const [resumeUrl, setResumeUrl] = useState('');
+  const [skills, setSkills] = useState<string[]>([]);
   const [newSkill, setNewSkill] = useState('');
   const [addingSkill, setAddingSkill] = useState(false);
-  const [experience, setExperience] = useState<ExperienceEntry[]>([]);
-  const [education, setEducation] = useState<EducationEntry[]>([]);
+  const [experience, setExperience] = useState<any[]>([]);
+  const [education, setEducation] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
+
+  // Modal states
+  const [isEduModalOpen, setIsEduModalOpen] = useState(false);
+  const [editingEduIndex, setEditingEduIndex] = useState<number | null>(null);
+
+  const [isExpModalOpen, setIsExpModalOpen] = useState(false);
+  const [editingExpIndex, setEditingExpIndex] = useState<number | null>(null);
+
+  const [isProjModalOpen, setIsProjModalOpen] = useState(false);
+  const [editingProjIndex, setEditingProjIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const data = activeSite?.siteDetail?.parsedData;
     if (data) {
-      let fullName = data.personalInfo?.name;
+      let fullName = data.name || data.personalInfo?.name;
       if (!fullName && data.personalInfo?.firstName) {
         fullName = `${data.personalInfo.firstName} ${data.personalInfo.lastName || ''}`.trim();
       }
       setName(fullName || DUMMY_RESUME.name);
-      setTitle(data.personalInfo?.title || DUMMY_RESUME.title);
+      setTitle(data.title || data.personalInfo?.title || DUMMY_RESUME.title);
+      setSummary(data.summary || DUMMY_RESUME.summary);
+      setProfilePhoto(data.profilePhoto || DUMMY_RESUME.profilePhoto || '');
+      setContact({
+        email: data.contact?.email || data.personalInfo?.email || DUMMY_RESUME.contact?.email || '',
+        phone: data.contact?.phone || data.personalInfo?.phone || DUMMY_RESUME.contact?.phone || '',
+        location: data.contact?.location || DUMMY_RESUME.contact?.location || ''
+      });
+      setSocial({
+        github: data.social?.github || data.personalInfo?.github || DUMMY_RESUME.social?.github || '',
+        linkedin: data.social?.linkedin || data.personalInfo?.linkedin || DUMMY_RESUME.social?.linkedin || '',
+        twitter: data.social?.twitter || DUMMY_RESUME.social?.twitter || '',
+        portfolioUrl: data.social?.portfolioUrl || DUMMY_RESUME.social?.portfolioUrl || '',
+        leetcode: data.social?.leetcode || DUMMY_RESUME.social?.leetcode || '',
+        hackerrank: data.social?.hackerrank || DUMMY_RESUME.social?.hackerrank || ''
+      });
+      setResumeUrl(data.resumeUrl || DUMMY_RESUME.resumeUrl || '');
       setSkills(data.skills?.length ? data.skills : DUMMY_RESUME.skills.slice(0, 3));
       setExperience(data.experience?.length ? data.experience : DUMMY_RESUME.experience);
       setEducation(data.education?.length ? data.education : DUMMY_RESUME.education);
+      setProjects(data.projects?.length ? data.projects : DUMMY_RESUME.projects);
     } else {
-      // Fallback to empty or dummy if no data
+      // Fallback to dummy
       setName(DUMMY_RESUME.name);
       setTitle(DUMMY_RESUME.title);
+      setSummary(DUMMY_RESUME.summary);
+      setProfilePhoto(DUMMY_RESUME.profilePhoto || '');
+      setContact(DUMMY_RESUME.contact || { email: '', phone: '', location: '' });
+      setSocial(DUMMY_RESUME.social || { github: '', linkedin: '', twitter: '', portfolioUrl: '', leetcode: '', hackerrank: '' });
+      setResumeUrl(DUMMY_RESUME.resumeUrl || '');
       setSkills(DUMMY_RESUME.skills.slice(0, 3));
       setExperience(DUMMY_RESUME.experience);
       setEducation(DUMMY_RESUME.education);
+      setProjects(DUMMY_RESUME.projects);
     }
   }, [activeSite]);
 
@@ -88,21 +130,71 @@ export default function ResumePage() {
   };
 
   /* ── Education ──────────────────────────────────────────── */
+  const handleSaveEducation = (data: any) => {
+    if (editingEduIndex !== null) {
+      setEducation(education.map((x, i) => i === editingEduIndex ? data : x));
+    } else {
+      setEducation([...education, data]);
+    }
+  };
+
   const removeEducation = (i: number) =>
     setEducation(education.filter((_, idx) => idx !== i));
 
+  const handleEditEducation = (i: number) => {
+    setEditingEduIndex(i);
+    setIsEduModalOpen(true);
+  };
+
   /* ── Experience ─────────────────────────────────────────── */
+  const handleSaveExperience = (data: any) => {
+    if (editingExpIndex !== null) {
+      setExperience(experience.map((x, i) => i === editingExpIndex ? data : x));
+    } else {
+      setExperience([...experience, data]);
+    }
+  };
+
   const removeExperience = (i: number) =>
     setExperience(experience.filter((_, idx) => idx !== i));
+
+  const handleEditExperience = (i: number) => {
+    setEditingExpIndex(i);
+    setIsExpModalOpen(true);
+  };
+
+  /* ── Projects ───────────────────────────────────────────── */
+  const handleSaveProject = (data: any) => {
+    if (editingProjIndex !== null) {
+      setProjects(projects.map((x, i) => i === editingProjIndex ? data : x));
+    } else {
+      setProjects([...projects, data]);
+    }
+  };
+
+  const removeProject = (i: number) =>
+    setProjects(projects.filter((_, idx) => idx !== i));
+
+  const handleEditProject = (i: number) => {
+    setEditingProjIndex(i);
+    setIsProjModalOpen(true);
+  };
 
   const handleSaveDetails = async () => {
     setIsSaving(true);
     try {
       const customData = {
-        personalInfo: { name, title },
+        name,
+        title,
+        summary,
+        profilePhoto,
+        contact,
+        social,
+        resumeUrl,
         skills,
         experience,
-        education
+        education,
+        projects
       };
 
       const res = await apiFetch('/site-details/save', {
@@ -208,39 +300,63 @@ export default function ResumePage() {
                           onChange={e => setTitle(e.target.value)}
                         />
                       </div>
+                      <div className={styles.field}>
+                        <label className={styles.label}>Professional Summary</label>
+                        <textarea
+                          className={styles.input}
+                          style={{ minHeight: '80px', resize: 'vertical' }}
+                          value={summary}
+                          onChange={e => setSummary(e.target.value)}
+                        />
+                      </div>
+                      <div className={styles.field}>
+                        <label className={styles.label}>Profile Photo URL</label>
+                        <input
+                          className={styles.input}
+                          type="text"
+                          placeholder="https://..."
+                          value={profilePhoto}
+                          onChange={e => setProfilePhoto(e.target.value)}
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  {/* Education */}
+                  {/* Contact Info */}
                   <div className={styles.card}>
                     <div className={styles.cardHeader}>
-                      <span className={`material-symbols-outlined ${styles.cardIcon}`}>school</span>
-                      <h3 className={styles.cardTitle}>Education</h3>
+                      <span className={`material-symbols-outlined ${styles.cardIcon}`}>contact_mail</span>
+                      <h3 className={styles.cardTitle}>Contact Information</h3>
                     </div>
-                    <div className="flex-col" style={{ display: 'flex', gap: '8px' }}>
-                      {education.map((edu, i) => (
-                        <div key={i} className={styles.eduEntry}>
-                          <div>
-                            <p className={styles.eduName}>{edu.institution}</p>
-                            <p className={styles.eduDegree}>{edu.degree}</p>
-                          </div>
-                          <button
-                            className={styles.deleteBtn}
-                            onClick={() => removeEducation(i)}
-                            title="Remove education"
-                          >
-                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>delete</span>
-                          </button>
-                        </div>
-                      ))}
+                    <div className={styles.fieldGroup}>
+                      <div className={styles.field}>
+                        <label className={styles.label}>Email</label>
+                        <input
+                          className={styles.input}
+                          type="email"
+                          value={contact.email}
+                          onChange={e => setContact({ ...contact, email: e.target.value })}
+                        />
+                      </div>
+                      <div className={styles.field}>
+                        <label className={styles.label}>Phone Number</label>
+                        <input
+                          className={styles.input}
+                          type="text"
+                          value={contact.phone}
+                          onChange={e => setContact({ ...contact, phone: e.target.value })}
+                        />
+                      </div>
+                      <div className={styles.field}>
+                        <label className={styles.label}>Location</label>
+                        <input
+                          className={styles.input}
+                          type="text"
+                          value={contact.location}
+                          onChange={e => setContact({ ...contact, location: e.target.value })}
+                        />
+                      </div>
                     </div>
-                    <button className={styles.addDashedBtn} onClick={() => {
-                      const inst = prompt('Institution Name:');
-                      const deg = prompt('Degree and Field of Study:');
-                      if (inst && deg) {
-                        setEducation([...education, { institution: inst, degree: deg, duration: '2023' }]);
-                      }
-                    }}>+ ADD EDUCATION</button>
                   </div>
 
                   {/* Skills */}
@@ -280,10 +396,69 @@ export default function ResumePage() {
                     </div>
                   </div>
 
+                  {/* Resume */}
+                  <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                      <span className={`material-symbols-outlined ${styles.cardIcon}`}>description</span>
+                      <h3 className={styles.cardTitle}>Resume</h3>
+                    </div>
+                    <div className={styles.fieldGroup}>
+                      <div className={styles.field}>
+                        <label className={styles.label}>Resume Link (PDF URL)</label>
+                        <input
+                          className={styles.input}
+                          type="text"
+                          placeholder="https://..."
+                          value={resumeUrl}
+                          onChange={e => setResumeUrl(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Education */}
+                  <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                      <span className={`material-symbols-outlined ${styles.cardIcon}`}>school</span>
+                      <h3 className={styles.cardTitle}>Education</h3>
+                    </div>
+                    <div className="flex-col" style={{ display: 'flex', gap: '8px' }}>
+                      {education.map((edu, i) => (
+                        <div key={i} className={styles.eduEntry}>
+                          <div>
+                            <p className={styles.eduName}>{edu.institution}</p>
+                            <p className={styles.eduDegree}>{edu.degree}{edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : ''}</p>
+                          </div>
+                            <button
+                              className={styles.expActionBtn}
+                              onClick={() => handleEditEducation(i)}
+                              title="Edit education"
+                              style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--on-surface-variant)' }}
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>edit</span>
+                            </button>
+                            <button
+                              className={styles.deleteBtn}
+                              onClick={() => removeEducation(i)}
+                              title="Remove education"
+                              style={{ marginLeft: '8px' }}
+                            >
+                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>delete</span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    <button className={styles.addDashedBtn} onClick={() => {
+                      setEditingEduIndex(null);
+                      setIsEduModalOpen(true);
+                    }}>+ ADD EDUCATION</button>
+                  </div>
+
                 </div>
 
-                {/* Right Column – Experience */}
+                {/* Right Column */}
                 <div className={styles.rightCol}>
+                  {/* Experience */}
                   <div className={`${styles.card} ${styles.expCard}`}>
                     <div className={styles.cardHeaderRight}>
                       <div className={styles.cardHeader} style={{ margin: 0 }}>
@@ -291,12 +466,8 @@ export default function ResumePage() {
                         <h3 className={styles.cardTitle}>Experience</h3>
                       </div>
                       <button className={styles.addExpBtn} onClick={() => {
-                        const comp = prompt('Company Name:');
-                        const role = prompt('Role Title:');
-                        const desc = prompt('Job Description:');
-                        if (comp && role && desc) {
-                          setExperience([...experience, { company: comp, role, duration: '2025 - Present', description: desc }]);
-                        }
+                        setEditingExpIndex(null);
+                        setIsExpModalOpen(true);
                       }}>
                         <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add_circle</span>
                         ADD EXPERIENCE
@@ -309,12 +480,7 @@ export default function ResumePage() {
                         className={`${styles.expEntry} ${i > 0 ? styles.expEntrySecondary : ''}`}
                       >
                         <div className={styles.expEntryActions}>
-                          <button className={styles.expActionBtn} onClick={() => {
-                            const newTitle = prompt('Edit Company Name:', exp.company);
-                            if (newTitle) {
-                              setExperience(experience.map((x, idx) => idx === i ? { ...x, company: newTitle } : x));
-                            }
-                          }}>
+                          <button className={styles.expActionBtn} onClick={() => handleEditExperience(i)}>
                             <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>edit</span>
                           </button>
                           <button className={`${styles.expActionBtn} ${styles.expActionBtnDanger}`} onClick={() => removeExperience(i)}>
@@ -331,13 +497,131 @@ export default function ResumePage() {
                               <h4 className={styles.expTitle}>{exp.company} – {exp.role}</h4>
                               {i === 0 && <span className={styles.badgePublished}>Published</span>}
                             </div>
-                            <p className={styles.expMeta}>{exp.duration}</p>
                             <p className={styles.expDesc}>{exp.description}</p>
+                            {exp.technologies && exp.technologies.length > 0 && <p className={styles.expMeta} style={{ marginTop: '8px' }}>Tech: {Array.isArray(exp.technologies) ? exp.technologies.join(', ') : exp.technologies}</p>}
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
+
+                  {/* Projects */}
+                  <div className={`${styles.card} ${styles.expCard}`} style={{ marginTop: '24px' }}>
+                    <div className={styles.cardHeaderRight}>
+                      <div className={styles.cardHeader} style={{ margin: 0 }}>
+                        <span className={`material-symbols-outlined ${styles.cardIcon}`}>code</span>
+                        <h3 className={styles.cardTitle}>Projects</h3>
+                      </div>
+                      <button className={styles.addExpBtn} onClick={() => {
+                        setEditingProjIndex(null);
+                        setIsProjModalOpen(true);
+                      }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add_circle</span>
+                        ADD PROJECT
+                      </button>
+                    </div>
+
+                    {projects.map((proj, i) => (
+                      <div
+                        key={i}
+                        className={`${styles.expEntry} ${i > 0 ? styles.expEntrySecondary : ''}`}
+                      >
+                        <div className={styles.expEntryActions}>
+                          <button className={styles.expActionBtn} onClick={() => handleEditProject(i)}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>edit</span>
+                          </button>
+                          <button className={`${styles.expActionBtn} ${styles.expActionBtnDanger}`} onClick={() => removeProject(i)}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>delete</span>
+                          </button>
+                        </div>
+
+                        <div className={styles.expContent}>
+                          <div className={styles.expLogo}>
+                            <span className="material-symbols-outlined">rocket_launch</span>
+                          </div>
+                          <div className={styles.expDetails}>
+                            <div className={styles.expTop}>
+                              <h4 className={styles.expTitle}>{proj.name}</h4>
+                            </div>
+                            <p className={styles.expDesc}>{proj.description}</p>
+                            <p className={styles.expMeta} style={{ marginTop: '8px' }}>Stack: {Array.isArray(proj.techStack) ? proj.techStack.join(', ') : proj.techStack}</p>
+                            {(proj.githubUrl || proj.liveUrl) && (
+                              <p className={styles.expMeta} style={{ marginTop: '4px' }}>
+                                {proj.githubUrl && <a href={proj.githubUrl} target="_blank" rel="noreferrer" style={{color: 'var(--primary-navy)'}}>GitHub</a>}
+                                {proj.githubUrl && proj.liveUrl && ' | '}
+                                {proj.liveUrl && <a href={proj.liveUrl} target="_blank" rel="noreferrer" style={{color: 'var(--primary-navy)'}}>Live Demo</a>}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Social Links */}
+                  <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                      <span className={`material-symbols-outlined ${styles.cardIcon}`}>share</span>
+                      <h3 className={styles.cardTitle}>Social Media Links</h3>
+                    </div>
+                    <div className={styles.fieldGroup}>
+                      <div className={styles.field}>
+                        <label className={styles.label}>GitHub URL</label>
+                        <input
+                          className={styles.input}
+                          type="text"
+                          value={social.github || ''}
+                          onChange={e => setSocial({ ...social, github: e.target.value })}
+                        />
+                      </div>
+                      <div className={styles.field}>
+                        <label className={styles.label}>LinkedIn URL</label>
+                        <input
+                          className={styles.input}
+                          type="text"
+                          value={social.linkedin || ''}
+                          onChange={e => setSocial({ ...social, linkedin: e.target.value })}
+                        />
+                      </div>
+                      <div className={styles.field}>
+                        <label className={styles.label}>Twitter / X URL</label>
+                        <input
+                          className={styles.input}
+                          type="text"
+                          value={social.twitter || ''}
+                          onChange={e => setSocial({ ...social, twitter: e.target.value })}
+                        />
+                      </div>
+                      <div className={styles.field}>
+                        <label className={styles.label}>Portfolio URL</label>
+                        <input
+                          className={styles.input}
+                          type="text"
+                          value={social.portfolioUrl || ''}
+                          onChange={e => setSocial({ ...social, portfolioUrl: e.target.value })}
+                        />
+                      </div>
+                      <div className={styles.field}>
+                        <label className={styles.label}>LeetCode URL</label>
+                        <input
+                          className={styles.input}
+                          type="text"
+                          value={social.leetcode || ''}
+                          onChange={e => setSocial({ ...social, leetcode: e.target.value })}
+                        />
+                      </div>
+                      <div className={styles.field}>
+                        <label className={styles.label}>HackerRank URL</label>
+                        <input
+                          className={styles.input}
+                          type="text"
+                          value={social.hackerrank || ''}
+                          onChange={e => setSocial({ ...social, hackerrank: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </section>
               
@@ -366,6 +650,28 @@ export default function ResumePage() {
 
         </div>{/* /canvas */}
       </main>
+
+      {/* Modals */}
+      <EducationModal
+        isOpen={isEduModalOpen}
+        onClose={() => setIsEduModalOpen(false)}
+        onSave={handleSaveEducation}
+        initialData={editingEduIndex !== null ? education[editingEduIndex] : undefined}
+      />
+      
+      <ExperienceModal
+        isOpen={isExpModalOpen}
+        onClose={() => setIsExpModalOpen(false)}
+        onSave={handleSaveExperience}
+        initialData={editingExpIndex !== null ? experience[editingExpIndex] : undefined}
+      />
+      
+      <ProjectModal
+        isOpen={isProjModalOpen}
+        onClose={() => setIsProjModalOpen(false)}
+        onSave={handleSaveProject}
+        initialData={editingProjIndex !== null ? projects[editingProjIndex] : undefined}
+      />
     </div>
   );
 }

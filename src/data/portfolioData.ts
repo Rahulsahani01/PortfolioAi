@@ -27,22 +27,41 @@ export interface ResumeData {
   name: string;
   title: string;
   summary: string;
+  profilePhoto?: string;
+  contact?: {
+    email: string;
+    phone?: string;
+    location?: string;
+  };
+  social?: {
+    github?: string;
+    linkedin?: string;
+    twitter?: string;
+    portfolioUrl?: string;
+    leetcode?: string;
+    hackerrank?: string;
+  };
+  resumeUrl?: string;
   skills: string[];
   experience: Array<{
     company: string;
     role: string;
-    duration: string;
+    duration?: string;
     description: string;
+    technologies?: string[];
   }>;
   education: Array<{
     institution: string;
     degree: string;
-    duration: string;
+    fieldOfStudy?: string;
+    duration?: string;
   }>;
   projects: Array<{
     name: string;
     description: string;
-    url: string;
+    techStack: string[];
+    githubUrl?: string;
+    liveUrl?: string;
   }>;
 }
 
@@ -132,41 +151,45 @@ export const TEMPLATES: Template[] = [
 ];
 
 export const DUMMY_RESUME: ResumeData = {
-  name: "Rahul Kumar",
-  title: "Full Stack Engineer",
-  summary: "Detail-oriented software developer with 3+ years of experience designing and deploying scalable web applications. Passionate about automated systems, clean interfaces, and cloud architectures.",
-  skills: ["React", "Next.js", "TypeScript", "Node.js", "PostgreSQL", "AWS", "CSS Modules", "Git"],
+  name: "John Doe",
+  title: "Professional Title",
+  summary: "A brief professional summary highlighting your key skills, experience, and what you are looking for in your next role.",
+  profilePhoto: "",
+  contact: {
+    email: "email@example.com",
+    phone: "+1 234 567 8900",
+    location: "City, Country",
+  },
+  social: {
+    github: "https://github.com/username",
+    linkedin: "https://linkedin.com/in/username",
+    twitter: "https://twitter.com/username",
+    portfolioUrl: "https://yourwebsite.com",
+  },
+  resumeUrl: "https://link-to-your-resume.pdf",
+  skills: ["Skill 1", "Skill 2", "Skill 3"],
   experience: [
     {
-      company: "TechCorp Solutions",
-      role: "Software Engineer",
-      duration: "2024 - Present",
-      description: "Developed and maintained high-traffic web apps using Next.js. Reduced load times by 40% using advanced static rendering strategies.",
-    },
-    {
-      company: "Innovate Labs",
-      role: "Associate Frontend Developer",
-      duration: "2023 - 2024",
-      description: "Collaborated with design teams to build pixel-perfect UI component libraries. Integrated third-party REST APIs and GraphQL endpoints.",
-    },
+      company: "Company Name",
+      role: "Job Title",
+      description: "Describe your responsibilities, key achievements, and the impact you had in this role.",
+      technologies: ["Tech 1", "Tech 2"],
+    }
   ],
   education: [
     {
-      institution: "State University of Technology",
-      degree: "B.Tech in Computer Science",
-      duration: "2019 - 2023",
+      institution: "Institution Name",
+      degree: "Degree Name",
+      fieldOfStudy: "Field of Study",
     },
   ],
   projects: [
     {
-      name: "PortfolioAI Builder",
-      description: "An AI tool that generates full portfolio websites from a simple resume upload.",
-      url: "https://portfolioai.com/demo",
-    },
-    {
-      name: "TaskManager Dashboard",
-      description: "A beautiful, Kanban-based productivity application built with TypeScript and drag-and-drop support.",
-      url: "https://github.com/rahul/taskmanager",
-    },
+      name: "Project Name",
+      description: "A short description of the project, what it solves, and its core features.",
+      techStack: ["Tech 1", "Tech 2"],
+      liveUrl: "https://project-demo.com",
+      githubUrl: "https://github.com/username/project",
+    }
   ],
 };
