@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import multer from 'multer';
+import { prisma } from '../server';
 // @ts-ignore - pdf-parse often lacks strong TypeScript definitions
 import pdf from 'pdf-parse';
 
@@ -71,6 +72,45 @@ export const parseSiteDetail = async (req: Request, res: Response, next: NextFun
     if (error.message === 'Only PDF files are supported for now!') {
        return res.status(400).json({ error: { message: error.message } });
     }
+    next(error);
+  }
+};
+
+export const saveSiteDetail = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user!.userId;
+    const { customData, siteDetailId } = req.body;
+
+    let siteDetail;
+
+    if (siteDetailId) {
+      // Update existing
+      siteDetail = await prisma.siteDetail.findUnique({ where: { id: siteDetailId } });
+      if (!siteDetail || siteDetail.userId !== userId) {
+        return res.status(404).json({ error: { message: 'Site detail not found' } });
+      }
+      siteDetail = await prisma.siteDetail.update({
+        where: { id: siteDetailId },
+        data: { parsedData: customData, status: 'COMPLETED' },
+      });
+    } else {
+      // Create new
+      siteDetail = await prisma.siteDetail.create({
+        data: {
+          userId,
+          fileUrl: 'manual-entry',
+          status: 'COMPLETED',
+          parsedData: customData || {},
+        },
+      });
+    }
+
+    res.status(200).json({
+      message: 'Site details saved successfully',
+      siteDetailId: siteDetail.id,
+      parsedData: siteDetail.parsedData,
+    });
+  } catch (error) {
     next(error);
   }
 };

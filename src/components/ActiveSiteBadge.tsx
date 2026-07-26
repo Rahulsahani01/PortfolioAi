@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ActiveSiteBadge({ siteName, status }: { siteName: string, status?: 'Draft' | 'Live' | 'Under Review' | 'Rejected' }) {
+export default function ActiveSiteBadge({ siteName, status, paymentStatus }: { siteName: string, status?: string, paymentStatus?: string | null }) {
   if (!siteName) return null;
 
   return (
@@ -14,7 +14,7 @@ export default function ActiveSiteBadge({ siteName, status }: { siteName: string
     }}>
       <span className="material-symbols-outlined" style={{ fontSize: '28px', color: 'var(--electric-indigo)' }}>language</span>
       {siteName}
-      {status === 'Under Review' && (
+      {paymentStatus === 'PENDING' && (
         <span style={{
           backgroundColor: '#FFF8E1',
           color: '#F57F17',
@@ -24,7 +24,7 @@ export default function ActiveSiteBadge({ siteName, status }: { siteName: string
           marginLeft: '8px'
         }}>Under Review</span>
       )}
-      {status === 'Rejected' && (
+      {paymentStatus === 'REJECTED' && (
         <span style={{
           backgroundColor: '#FFEBEE',
           color: '#D32F2F',

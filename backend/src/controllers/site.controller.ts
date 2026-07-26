@@ -5,7 +5,29 @@ import { publishQueue } from '../queues/publish.queue';
 export const getSites = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = req.user!.userId;
-    const sites = await prisma.site.findMany({ where: { userId } });
+    const { siteId } = req.query;
+    
+    const whereClause: any = { userId };
+    if (siteId && typeof siteId === 'string') {
+      whereClause.id = siteId;
+    }
+
+    const sitesData = await prisma.site.findMany({ 
+      where: whereClause,
+      include: {
+        payments: {
+          orderBy: { createdAt: 'desc' },
+          take: 1
+        },
+        socialOffer: true
+      }
+    });
+    
+    const sites = sitesData.map((site: any) => ({
+      ...site,
+      paymentStatus: site.payments.length > 0 ? site.payments[0].status : null
+    }));
+    
     res.status(200).json({ sites });
   } catch (error) {
     next(error);
@@ -41,11 +63,24 @@ export const createSite = async (req: Request, res: Response, next: NextFunction
       return res.status(400).json({ error: { message: 'Slug is already taken' } });
     }
 
+    let finalSiteDetailId = siteDetailId;
+    if (!finalSiteDetailId) {
+      const newDetail = await prisma.siteDetail.create({
+        data: {
+          userId,
+          fileUrl: 'manual',
+          status: 'PENDING',
+          parsedData: {}
+        }
+      });
+      finalSiteDetailId = newDetail.id;
+    }
+
     const site = await prisma.site.create({
       data: {
         userId,
-        siteDetailId,
-        templateKey,
+        siteDetailId: finalSiteDetailId,
+        templateKey: templateKey || 'modern-dev',
         slug,
         status: 'DRAFT',
       },

@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../../context/AuthContext';
+import { apiFetch } from '../../lib/api';
 import styles from './page.module.css';
 
 export default function AuthPage() {
@@ -13,14 +15,39 @@ export default function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { login } = useAuth();
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    
     if (!email || !password || (activeTab === 'signup' && !fullName)) {
-      alert('Please fill out all required fields.');
+      setError('Please fill out all required fields.');
       return;
     }
-    // Navigate to dashboard upon successful simulation
-    router.push('/dashboard');
+
+    setIsLoading(true);
+    try {
+      if (activeTab === 'login') {
+        const data = await apiFetch('/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ email, password }),
+        });
+        login(data.accessToken, data.user);
+      } else {
+        const data = await apiFetch('/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({ email, password }), // We aren't storing fullName in DB yet, but we collect it
+        });
+        login(data.accessToken, data.user);
+      }
+    } catch (err: any) {
+      setError(err.message || 'Authentication failed');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -68,6 +95,9 @@ export default function AuthPage() {
           <div className={styles.divider}>
             <span className={styles.dividerText}>or</span>
           </div>
+
+          {/* Error Message */}
+          {error && <div className={styles.errorMessage} style={{ color: 'red', marginBottom: '1rem', fontSize: '0.875rem', textAlign: 'center' }}>{error}</div>}
 
           {/* Form Content */}
           <form className={styles.form} onSubmit={handleSubmit}>
@@ -133,9 +163,9 @@ export default function AuthPage() {
               </div>
             </div>
 
-            {/* CTA Button */}
-            <button className={styles.submitBtn} type="submit">
-              {activeTab === 'login' ? 'Log In' : 'Create Account'}
+            {/* Submit Button */}
+            <button className={styles.submitBtn} type="submit" disabled={isLoading}>
+              {isLoading ? 'Processing...' : (activeTab === 'login' ? 'Sign In' : 'Create Account')}
             </button>
           </form>
         </div>

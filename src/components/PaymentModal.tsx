@@ -5,31 +5,15 @@ import { useState, useEffect } from 'react';
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (transactionNo: string, screenshotFile: File | null) => void;
+  onSubmit: (transactionNo: string, screenshotFile: File | null, amount: number) => void;
   styles: any;
+  isOfferUnlocked?: boolean;
 }
 
-export default function PaymentModal({ isOpen, onClose, onSubmit, styles }: PaymentModalProps) {
+export default function PaymentModal({ isOpen, onClose, onSubmit, styles, isOfferUnlocked = false }: PaymentModalProps) {
   const [selectedPlan, setSelectedPlan] = useState<'6_month' | '1_year' | '3_year'>('1_year');
   const [transactionNo, setTransactionNo] = useState('');
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
-  const [isOfferUnlocked, setIsOfferUnlocked] = useState(false);
-
-  useEffect(() => {
-    if (isOpen) {
-      const savedSites = localStorage.getItem('mock_portfolio_sites');
-      const savedActiveId = localStorage.getItem('active_portfolio_site_id');
-      if (savedSites && savedActiveId) {
-        const parsed = JSON.parse(savedSites);
-        const activeSite = parsed.find((s: any) => s.id === savedActiveId);
-        if (activeSite && activeSite.offerStatus === 'Unlocked') {
-          setIsOfferUnlocked(true);
-        } else {
-          setIsOfferUnlocked(false);
-        }
-      }
-    }
-  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -38,7 +22,11 @@ export default function PaymentModal({ isOpen, onClose, onSubmit, styles }: Paym
     : { sixMo: 500, oneYr: 1000, threeYr: 1500 };
 
   const handleSubmit = () => {
-    onSubmit(transactionNo, screenshotFile);
+    let amount = prices.oneYr;
+    if (selectedPlan === '6_month') amount = prices.sixMo;
+    if (selectedPlan === '3_year') amount = prices.threeYr;
+
+    onSubmit(transactionNo, screenshotFile, amount);
     // Reset local state after submit
     setTransactionNo('');
     setScreenshotFile(null);

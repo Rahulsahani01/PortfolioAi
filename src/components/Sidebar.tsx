@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../context/AuthContext';
 
 interface SidebarProps {
   styles: any;
@@ -12,6 +13,7 @@ interface SidebarProps {
 
 export default function Sidebar({ styles, activePath, onCreateSite, disableCreate }: SidebarProps) {
   const router = useRouter();
+  const { logout } = useAuth();
 
   return (
     <aside className={styles.sidebar}>
@@ -84,10 +86,10 @@ export default function Sidebar({ styles, activePath, onCreateSite, disableCreat
           <span className={`material-symbols-outlined ${styles.navIcon}`}>help</span>
           <span>Help Center</span>
         </a>
-        <Link href="/auth" className={`${styles.navItem} ${styles.logoutItem}`}>
+        <button onClick={logout} className={`${styles.navItem} ${styles.logoutItem}`} style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit' }}>
           <span className={`material-symbols-outlined ${styles.navIcon}`}>logout</span>
           <span>Logout</span>
-        </Link>
+        </button>
       </div>
     </aside>
   );

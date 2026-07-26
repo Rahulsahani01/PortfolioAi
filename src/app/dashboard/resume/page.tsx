@@ -2,10 +2,13 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { DUMMY_RESUME } from '../../../data/portfolioData';
 import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
 import Sidebar from '../../../components/Sidebar';
+import { useSites } from '../../../context/SitesContext';
+import { useAuth } from '../../../context/AuthContext';
+import { apiFetch } from '../../../lib/api';
 import styles from './page.module.css';
 
 type Skill = string;
@@ -14,23 +17,24 @@ type EducationEntry = typeof DUMMY_RESUME.education[0];
 
 export default function ResumePage() {
   const router = useRouter();
-  
+  const searchParams = useSearchParams();
+  const { activeSite, activeSiteId, refreshSites } = useSites();
+  const { token } = useAuth();
+  const slug = searchParams.get('slug') || searchParams.get('siteId');
+
   const [activeSiteName, setActiveSiteName] = useState<string | null>(null);
-  const [activeSiteStatus, setActiveSiteStatus] = useState<'Draft' | 'Live' | 'Under Review' | 'Rejected' | undefined>(undefined);
+  const [activeSiteStatus, setActiveSiteStatus] = useState<'Draft' | 'LIVE' | 'UNDER_REVIEW' | 'REJECTED' | 'PUBLISHING' | undefined>(undefined);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    const savedSites = localStorage.getItem('mock_portfolio_sites');
-    if (savedSites) {
-      const parsed = JSON.parse(savedSites);
-      const savedActiveId = localStorage.getItem('active_portfolio_site_id');
-      const activeSite = savedActiveId ? parsed.find((s: any) => s.id === savedActiveId) : (parsed.length > 0 ? parsed[0] : null);
-      
-      if (activeSite) {
-        setActiveSiteName(activeSite.name);
-        setActiveSiteStatus(activeSite.status);
-      }
+    if (activeSite) {
+      setActiveSiteName(activeSite.slug); // We use slug as name
+      setActiveSiteStatus(activeSite.status);
+    } else if (slug) {
+      setActiveSiteName(slug);
+      setActiveSiteStatus('Draft');
     }
-  }, []);
+  }, [activeSite, slug]);
 
   // Editor states
   const [name, setName] = useState(DUMMY_RESUME.name);
@@ -60,22 +64,39 @@ export default function ResumePage() {
   const removeExperience = (i: number) =>
     setExperience(experience.filter((_, idx) => idx !== i));
 
-  const handleSaveDetails = () => {
-    const savedSites = localStorage.getItem('mock_portfolio_sites');
-    const savedActiveId = localStorage.getItem('active_portfolio_site_id');
-    
-    if (savedSites && savedActiveId) {
-      const parsed = JSON.parse(savedSites);
-      const updatedSites = parsed.map((site: any) => {
-        if (site.id === savedActiveId) {
-          return { ...site, resume: 'Completed' };
-        }
-        return site;
+  const handleSaveDetails = async () => {
+    setIsSaving(true);
+    try {
+      const customData = {
+        personalInfo: { name, title },
+        skills,
+        experience,
+        education
+      };
+
+      const res = await apiFetch('/site-details/save', {
+        method: 'POST',
+        token: token || undefined,
+        body: JSON.stringify({
+          customData,
+          siteDetailId: activeSite?.siteDetailId || undefined
+        }),
       });
-      localStorage.setItem('mock_portfolio_sites', JSON.stringify(updatedSites));
+
+      // No need to save to localStorage as it's linked to the DB record.
+
+      alert('Details saved successfully!');
+      if (activeSite?.id) {
+        await refreshSites(activeSite.id);
+      }
+      if (slug) {
+        router.push(`/dashboard/templates?slug=${slug}`);
+      }
+    } catch (err: any) {
+      alert('Error saving details: ' + err.message);
+    } finally {
+      setIsSaving(false);
     }
-    
-    alert('Details saved successfully!');
   };
 
   return (
@@ -90,7 +111,7 @@ export default function ResumePage() {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {activeSiteName ? (
               <>
-                <ActiveSiteBadge siteName={activeSiteName} status={activeSiteStatus} />
+                <ActiveSiteBadge siteName={activeSiteName} status={activeSiteStatus} paymentStatus={activeSite?.paymentStatus} />
               </>
             ) : (
               <h2 className={styles.topBarTitle}>Site Details</h2>
@@ -292,8 +313,8 @@ export default function ResumePage() {
               <div className={styles.actionBar}>
                 <div style={{flex: 1}} />
                 <div className={styles.actionBarRight}>
-                  <button className={styles.saveBtn} onClick={handleSaveDetails}>
-                    Save Details
+                  <button className={styles.saveBtn} onClick={handleSaveDetails} disabled={isSaving}>
+                    {isSaving ? 'Saving...' : 'Save Details'}
                     <span className="material-symbols-outlined">check</span>
                   </button>
                 </div>

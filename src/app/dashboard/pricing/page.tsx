@@ -1,16 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Sidebar from '../../../components/Sidebar';
 import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
+import { useSites } from '../../../context/SitesContext';
+import { useAuth } from '../../../context/AuthContext';
+import { apiFetch } from '../../../lib/api';
 import styles from './page.module.css';
 
 export default function PricingPage() {
-  const [activeSiteId, setActiveSiteId] = useState<string | null>(null);
-  const [activeSiteName, setActiveSiteName] = useState<string | null>(null);
-  const [activeSiteStatus, setActiveSiteStatus] = useState<'Draft' | 'Live' | 'Under Review' | 'Rejected' | undefined>(undefined);
-  const [offerStatus, setOfferStatus] = useState<'None' | 'Pending' | 'Unlocked' | 'Rejected'>('None');
-  const [sites, setSites] = useState<any[]>([]);
+  const { activeSite, activeSiteId, refreshSites } = useSites();
+  const { token } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form states
   const [socialType, setSocialType] = useState('LinkedIn');
@@ -18,25 +19,7 @@ export default function PricingPage() {
   const [postLink, setPostLink] = useState('');
   const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
 
-  useEffect(() => {
-    // Load Active Site
-    const savedSites = localStorage.getItem('mock_portfolio_sites');
-    if (savedSites) {
-      const parsed = JSON.parse(savedSites);
-      setSites(parsed);
-      const savedActiveId = localStorage.getItem('active_portfolio_site_id');
-      const activeSite = savedActiveId ? parsed.find((s: any) => s.id === savedActiveId) : (parsed.length > 0 ? parsed[0] : null);
-      
-      if (activeSite) {
-        setActiveSiteId(activeSite.id);
-        setActiveSiteName(activeSite.name);
-        setActiveSiteStatus(activeSite.status);
-        setOfferStatus(activeSite.offerStatus || 'None');
-      }
-    }
-  }, []);
-
-  const handleSubmitOffer = () => {
+  const handleSubmitOffer = async () => {
     if (!handlerName || !postLink || !screenshotFile) {
       alert('Please fill out all fields and upload a screenshot to claim the offer.');
       return;
@@ -44,17 +27,34 @@ export default function PricingPage() {
     
     if (!activeSiteId) return;
 
-    // In a real app, this would submit to the backend for review.
-    // Update local storage for mock data
-    const updated = sites.map(s => s.id === activeSiteId ? { ...s, offerStatus: 'Pending' } : s);
-    setSites(updated);
-    localStorage.setItem('mock_portfolio_sites', JSON.stringify(updated));
-    setOfferStatus('Pending');
-    alert('Reference submitted successfully!');
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append('siteId', activeSiteId);
+      formData.append('platform', socialType);
+      formData.append('handlerName', handlerName);
+      formData.append('postUrl', postLink);
+      formData.append('screenshot', screenshotFile);
+
+      await apiFetch('/social-offers', {
+        method: 'POST',
+        token: token || undefined,
+        body: formData as any, // fetch will correctly set content-type for FormData if we pass it directly
+        isFormData: true
+      });
+
+      alert('Reference submitted successfully! Your offer is under review.');
+      await refreshSites(activeSiteId);
+    } catch (err: any) {
+      alert('Error submitting offer: ' + err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const isOfferUnlocked = offerStatus === 'Unlocked';
-  const isOfferPending = offerStatus === 'Pending';
+  const offerStatus = activeSite?.socialOffer?.status || 'None';
+  const isOfferUnlocked = offerStatus === 'APPROVED';
+  const isOfferPending = offerStatus === 'PENDING';
 
   const prices = isOfferUnlocked 
     ? { sixMo: 250, oneYr: 500, threeYr: 1000 }
@@ -67,9 +67,9 @@ export default function PricingPage() {
       <main className={styles.mainArea}>
         <header className={styles.topBar}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {activeSiteName ? (
+            {activeSite ? (
               <>
-                <ActiveSiteBadge siteName={activeSiteName} status={activeSiteStatus} />
+                <ActiveSiteBadge siteName={activeSite.slug} status={activeSite.status} paymentStatus={activeSite.paymentStatus} />
               </>
             ) : (
               <h2 className={styles.topBarTitle}>Pricing</h2>

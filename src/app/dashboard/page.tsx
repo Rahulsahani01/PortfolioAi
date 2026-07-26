@@ -5,22 +5,15 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ActiveSiteBadge from '../../components/ActiveSiteBadge';
 import Sidebar from '../../components/Sidebar';
+import { useSites } from '../../context/SitesContext';
+import { useAuth } from '../../context/AuthContext';
+import { apiFetch } from '../../lib/api';
 import styles from './page.module.css';
-
-type Site = {
-  id: string;
-  name: string;
-  slug: string;
-  status: 'Draft' | 'Live' | 'Under Review' | 'Rejected';
-  offerStatus?: 'None' | 'Pending' | 'Unlocked' | 'Rejected';
-  template: string;
-  resume: string;
-};
 
 export default function UserDashboard() {
   const router = useRouter();
-  const [sites, setSites] = useState<Site[]>([]);
-  const [activeSiteId, setActiveSiteId] = useState<string | null>(null);
+  const { sites, activeSite, activeSiteId, setActiveSiteId, refreshSites } = useSites();
+  const { token } = useAuth();
 
   // Modal & Wizard State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,57 +27,34 @@ export default function UserDashboard() {
     }
   }, [searchParams, router]);
 
-  useEffect(() => {
-    const savedSites = localStorage.getItem('mock_portfolio_sites');
-    if (savedSites) {
-      const parsed = JSON.parse(savedSites);
-      setSites(parsed);
-      const savedActiveId = localStorage.getItem('active_portfolio_site_id');
-      if (savedActiveId && parsed.find((s: Site) => s.id === savedActiveId)) {
-        setActiveSiteId(savedActiveId);
-      } else if (parsed.length > 0) {
-        handleSetActiveSite(parsed[0].id);
-      }
-    }
-  }, []);
-
-  const handleSetActiveSite = (id: string) => {
-    setActiveSiteId(id);
-    localStorage.setItem('active_portfolio_site_id', id);
-  };
-
-  const saveSites = (newSites: Site[]) => {
-    setSites(newSites);
-    localStorage.setItem('mock_portfolio_sites', JSON.stringify(newSites));
-    if (newSites.length > 0 && !activeSiteId) {
-      handleSetActiveSite(newSites[0].id);
-    }
-  };
+  // Removed local storage useEffects as context handles it
 
   const openCreateWizard = () => {
     setNewSiteSlug('');
     setIsModalOpen(true);
   };
 
-  const handleFinishWizard = () => {
-    const newSite: Site = {
-      id: Math.random().toString(36).substring(7),
-      name: newSiteSlug,
-      slug: newSiteSlug,
-      status: 'Draft',
-      template: 'Modern Minimal', // Default
-      resume: '',
-    };
+  const [isCreating, setIsCreating] = useState(false);
 
-    saveSites([...sites, newSite]);
-    setIsModalOpen(false);
-
-    // Switch active site context to the new one and redirect to resume editor
-    handleSetActiveSite(newSite.id);
-    router.push('/dashboard/resume');
+  const handleFinishWizard = async () => {
+    if (!newSiteSlug) return;
+    try {
+      setIsCreating(true);
+      const data = await apiFetch('/sites', {
+        method: 'POST',
+        token: token || undefined,
+        body: JSON.stringify({ slug: newSiteSlug })
+      });
+      await refreshSites(); // wait for context to update
+      setActiveSiteId(data.site.id);
+      setIsModalOpen(false);
+      router.push(`/dashboard/resume?siteId=${data.site.id}`);
+    } catch (err: any) {
+      alert(err.message || 'Failed to create site');
+    } finally {
+      setIsCreating(false);
+    }
   };
-
-  const activeSite = sites.find(s => s.id === activeSiteId);
 
   return (
     <div className={styles.shell}>
@@ -102,7 +72,7 @@ export default function UserDashboard() {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {activeSite ? (
               <>
-                <ActiveSiteBadge siteName={activeSite.name} status={activeSite.status} />
+                <ActiveSiteBadge siteName={activeSite.slug} status={activeSite.status} paymentStatus={activeSite.paymentStatus} />
               </>
             ) : (
               <h2 className={styles.topBarTitle}>Dashboard</h2>
@@ -177,44 +147,43 @@ export default function UserDashboard() {
 
               {/* Grid Layout for Cards */}
               <div className={styles.statusGrid}>
-                {sites.map((site) => (
-                  <div
-                    key={site.id}
-                    className={styles.statusCard}
+                {sites.map(site => (
+                  <div key={site.id} className={styles.statusCard}
                     style={{ 
                       backgroundColor: activeSiteId === site.id ? '#e1e0ff' : 'var(--surface-container-lowest)',
-                      borderTop: activeSiteId === site.id ? '3px solid var(--electric-indigo)' : '2px solid transparent' 
+                      borderTopColor: activeSiteId === site.id ? 'var(--electric-indigo)' : 'transparent' 
                     }}
-                    onClick={() => handleSetActiveSite(site.id)}
                   >
                     <div className={styles.cardTop}>
-                      <div className={styles.cardIcon}>
-                        <span className={`material-symbols-outlined ${styles.cardIconSpan}`}>language</span>
+                      <div>
+                        <h4 className={styles.cardTitle}>{site.slug}</h4>
+                        <span className={site.status === 'LIVE' ? styles.badgeParsed : styles.badgeDraft}>
+                          {site.status}
+                        </span>
                       </div>
-                      <span className={site.status === 'Live' ? styles.badgeParsed : styles.badgeDraft}>
-                        {site.status}
-                      </span>
-                    </div>
-                    <h4 className={styles.cardTitle}>{site.name}</h4>
-                    <p className={styles.cardDesc} style={{ marginBottom: '8px' }}>
-                      portfolio.ai/{site.slug}
-                    </p>
-                    <p className={styles.cardDesc} style={{ fontSize: '12px', marginTop: 0 }}>
-                      Template: {site.template} • Resume: {site.resume}
-                    </p>
-
-                    <div className={styles.cardActions}>
-                      <button
-                        className={styles.cardLinkBtn}
-                        onClick={(e) => { e.stopPropagation(); handleSetActiveSite(site.id); router.push('/dashboard/my-site'); }}
-                      >
-                        <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>settings</span>
-                        Manage Site
+                      <button className={styles.iconBtn}>
+                        <span className="material-symbols-outlined">more_vert</span>
                       </button>
-                      <a href={`http://portfolio.ai/${site.slug}`} target="_blank" rel="noreferrer" className={styles.cardTextBtn} onClick={e => e.stopPropagation()}>
-                        <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>open_in_new</span>
-                        Visit
-                      </a>
+                    </div>
+                    <div className={styles.cardDesc}>
+                      <p style={{ margin: 0, marginBottom: '4px' }}><strong>Template:</strong> {site.templateKey || 'None'}</p>
+                      <p style={{ margin: 0 }}><strong>Created:</strong> {new Date(site.createdAt).toLocaleDateString()}</p>
+                    </div>
+                    <div className={styles.cardActions}>
+                      <button 
+                        className={styles.cardTextBtn} 
+                        onClick={() => setActiveSiteId(site.id)}
+                        disabled={activeSite?.id === site.id}
+                        style={{ marginLeft: 0, opacity: activeSite?.id === site.id ? 0.5 : 1 }}
+                      >
+                        <span className="material-symbols-outlined">
+                          {activeSite?.id === site.id ? 'check_circle' : 'swap_horiz'}
+                        </span>
+                        {activeSite?.id === site.id ? 'Currently Active' : 'Switch to Site'}
+                      </button>
+                      <button className={styles.primarySiteBtn} onClick={() => router.push(`/dashboard/resume?siteId=${site.id}`)}>
+                        Edit Content
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -279,10 +248,10 @@ export default function UserDashboard() {
               <button
                 className={styles.modalBtnPrimary}
                 onClick={handleFinishWizard}
-                disabled={!newSiteSlug}
-                style={{ opacity: (!newSiteSlug) ? 0.5 : 1 }}
+                disabled={!newSiteSlug || isCreating}
+                style={{ opacity: (!newSiteSlug || isCreating) ? 0.5 : 1 }}
               >
-                Continue to Resume
+                {isCreating ? 'Creating...' : 'Continue to Resume'}
               </button>
             </div>
           </div>

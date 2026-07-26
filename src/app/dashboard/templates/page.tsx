@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
 import Sidebar from '../../../components/Sidebar';
+import { useSites } from '../../../context/SitesContext';
+import { useAuth } from '../../../context/AuthContext';
+import { apiFetch } from '../../../lib/api';
 import styles from './page.module.css';
 
 interface Template {
@@ -48,25 +51,40 @@ const TEMPLATES: Template[] = [
 
 export default function TemplatesPage() {
   const router = useRouter();
-  const [selectedId, setSelectedId] = useState<string>('modern-dev');
-  const [activeSiteName, setActiveSiteName] = useState<string | null>(null);
-  const [activeSiteStatus, setActiveSiteStatus] = useState<'Draft' | 'Live' | 'Under Review' | 'Rejected' | undefined>(undefined);
-  const [isResumeCompleted, setIsResumeCompleted] = useState<boolean>(false);
+  const searchParams = useSearchParams();
+  const { activeSite, refreshSites, setActiveSiteId } = useSites();
+  const { token } = useAuth();
+  const slug = searchParams.get('slug') || searchParams.get('siteId');
 
-  useEffect(() => {
-    const savedSites = localStorage.getItem('mock_portfolio_sites');
-    if (savedSites) {
-      const parsed = JSON.parse(savedSites);
-      const savedActiveId = localStorage.getItem('active_portfolio_site_id');
-      const activeSite = savedActiveId ? parsed.find((s: any) => s.id === savedActiveId) : (parsed.length > 0 ? parsed[0] : null);
-      
-      if (activeSite) {
-        setActiveSiteName(activeSite.name);
-        setActiveSiteStatus(activeSite.status);
-        setIsResumeCompleted(activeSite.resume === 'Completed');
-      }
+  const [selectedId, setSelectedId] = useState<string>('modern-dev');
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const activeSiteName = activeSite?.slug || slug;
+  const activeSiteStatus = activeSite?.status || 'Draft';
+  
+  const canGenerate = !!activeSite;
+
+  const handleGenerateSite = async () => {
+    if (!canGenerate || !activeSite) return;
+    setIsGenerating(true);
+    try {
+      await apiFetch(`/sites/${activeSite.id}`, {
+        method: 'PUT',
+        token: token || undefined,
+        body: JSON.stringify({
+          templateKey: selectedId
+        })
+      });
+
+      // Refresh global context and redirect to My Site
+      await refreshSites(activeSite.id);
+      router.push('/dashboard/my-site');
+    } catch (err: any) {
+      alert('Error updating site: ' + err.message);
+    } finally {
+      setIsGenerating(false);
     }
-  }, []);
+  };
 
   const selectedTemplate = TEMPLATES.find(t => t.id === selectedId) || TEMPLATES[0];
 
@@ -82,7 +100,7 @@ export default function TemplatesPage() {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {activeSiteName ? (
               <>
-                <ActiveSiteBadge siteName={activeSiteName} status={activeSiteStatus} />
+                <ActiveSiteBadge siteName={activeSiteName} status={activeSiteStatus} paymentStatus={activeSite?.paymentStatus} />
               </>
             ) : (
               <h2 className={styles.topBarTitle} style={{ margin: 0 }}>Select a Template</h2>
@@ -191,17 +209,17 @@ export default function TemplatesPage() {
             <div>
               <button 
                 className={styles.previewDataBtn} 
-                onClick={() => {
-                  if (isResumeCompleted) router.push('/dashboard/my-site');
-                }}
+                onClick={handleGenerateSite}
                 style={{ 
-                  opacity: isResumeCompleted ? 1 : 0.5, 
-                  cursor: isResumeCompleted ? 'pointer' : 'not-allowed' 
+                  opacity: canGenerate ? 1 : 0.5, 
+                  cursor: canGenerate ? 'pointer' : 'not-allowed' 
                 }}
-                title={!isResumeCompleted ? "Site details are not completely filled" : ""}
+                disabled={isGenerating || !canGenerate}
               >
-                <span className="material-symbols-outlined">play_circle</span>
-                Preview with My Data
+                <span className="material-symbols-outlined">
+                  publish
+                </span>
+                {isGenerating ? 'Generating...' : 'Preview with Data'}
               </button>
             </div>
           </div>

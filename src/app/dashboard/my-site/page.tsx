@@ -1,76 +1,30 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
 import Sidebar from '../../../components/Sidebar';
 import PaymentModal from '../../../components/PaymentModal';
+import { useSites } from '../../../context/SitesContext';
+import { useAuth } from '../../../context/AuthContext';
+import { apiFetch } from '../../../lib/api';
 import styles from './page.module.css';
-
-type Site = {
-  id: string;
-  name: string;
-  slug: string;
-  status: 'Draft' | 'Live' | 'Under Review' | 'Rejected';
-  offerStatus?: 'None' | 'Pending' | 'Unlocked' | 'Rejected';
-  template: string;
-  resume: string;
-};
 
 export default function MySitePage() {
   const router = useRouter();
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  // States
-  const [sites, setSites] = useState<Site[]>([]);
-  const [activeSiteId, setActiveSiteId] = useState<string | null>(null);
+  const { sites, activeSite, setActiveSiteId, refreshSites } = useSites();
+  const { token } = useAuth();
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Payment Modal States
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
-  // Load from local storage on mount
-  useEffect(() => {
-    const savedSites = localStorage.getItem('mock_portfolio_sites');
-    if (savedSites) {
-      const parsed = JSON.parse(savedSites);
-      setSites(parsed);
-      const savedActiveId = localStorage.getItem('active_portfolio_site_id');
-      if (savedActiveId && parsed.find((s: Site) => s.id === savedActiveId)) {
-        setActiveSiteId(savedActiveId);
-      } else if (parsed.length > 0) {
-        handleSetActiveSite(parsed[0].id);
-      }
-    }
-  }, []);
-
-  const handleSetActiveSite = (id: string | null) => {
-    setActiveSiteId(id);
-    if (id) {
-      localStorage.setItem('active_portfolio_site_id', id);
-    } else {
-      localStorage.removeItem('active_portfolio_site_id');
-    }
-  };
-
-  const saveSites = (newSites: Site[]) => {
-    setSites(newSites);
-    localStorage.setItem('mock_portfolio_sites', JSON.stringify(newSites));
-    if (newSites.length === 0) {
-      handleSetActiveSite(null);
-    } else if (activeSiteId && !newSites.find(s => s.id === activeSiteId)) {
-      handleSetActiveSite(newSites[0].id);
-    }
-  };
-
-  const activeSite = sites.find(s => s.id === activeSiteId);
-
   const handleUnpublish = () => {
     if (!activeSite) return;
     if (confirm('Are you sure you want to unpublish your portfolio website? It will no longer be visible to the public.')) {
-      const updated = sites.map(s => s.id === activeSite.id ? { ...s, status: 'Draft' as const } : s);
-      saveSites(updated);
+      // In real backend, call API to unpublish
+      console.log('Unpublish not implemented');
     }
   };
 
@@ -79,23 +33,49 @@ export default function MySitePage() {
     setIsPaymentModalOpen(true);
   };
 
-  const handleSubmitPayment = (transactionNo: string, screenshotFile: File | null) => {
+  const handleSubmitPayment = async (transactionNo: string, screenshotFile: File | null, amount: number) => {
     if (!activeSite) return;
     if (!transactionNo || !screenshotFile) {
       alert('Please provide both the transaction number and a payment screenshot.');
       return;
     }
-    const updated = sites.map(s => s.id === activeSite.id ? { ...s, status: 'Under Review' as const } : s);
-    saveSites(updated);
-    setIsPaymentModalOpen(false);
-    alert('Payment details submitted! Your site is under review.');
+
+    try {
+      const checkoutRes = await apiFetch('/billing/checkout', {
+        method: 'POST',
+        token: token || undefined,
+        body: JSON.stringify({
+          siteId: activeSite.id,
+          amount
+        })
+      });
+
+      // 2. Upload screenshot
+      const formData = new FormData();
+      formData.append('paymentId', checkoutRes.paymentId);
+      formData.append('utrNumber', transactionNo);
+      formData.append('screenshot', screenshotFile);
+
+      await apiFetch('/billing/verify', {
+        method: 'POST',
+        token: token || undefined,
+        body: formData as any,
+        isFormData: true
+      });
+
+      alert('Payment details submitted! Your site is under review.');
+      setIsPaymentModalOpen(false);
+      // Refresh sites to update status to UNDER_REVIEW
+      window.location.reload(); 
+    } catch (err: any) {
+      alert('Error submitting payment: ' + err.message);
+    }
   };
 
   const handleDelete = () => {
     if (!activeSite) return;
     if (confirm('⚠️ WARNING: Deleting your site will permanently remove all content, custom configurations, and DNS settings. This cannot be undone! Proceed?')) {
-      const updated = sites.filter(s => s.id !== activeSite.id);
-      saveSites(updated);
+      // API call to delete
       router.push('/dashboard');
     }
   };
@@ -119,9 +99,7 @@ export default function MySitePage() {
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 {activeSite ? (
-                  <>
-                    <ActiveSiteBadge siteName={activeSite.name} status={activeSite.status} />
-                  </>
+                  <ActiveSiteBadge siteName={activeSite.slug} status={activeSite.status} paymentStatus={activeSite.paymentStatus} />
                 ) : (
                   <h2 className={styles.topBarTitle} style={{ margin: 0 }}>
                     My Site Management
@@ -142,11 +120,15 @@ export default function MySitePage() {
             {sites.length > 0 && (
               <select 
                 style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--outline)', outline: 'none', fontWeight: 600, color: 'var(--primary-navy)' }}
-                value={activeSiteId || ''}
-                onChange={(e) => handleSetActiveSite(e.target.value)}
+                value={activeSite?.id || ''}
+                onChange={async (e) => {
+                  const newSiteId = e.target.value;
+                  setActiveSiteId(newSiteId);
+                  await refreshSites(newSiteId);
+                }}
               >
                 {sites.map(s => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
+                  <option key={s.id} value={s.id}>{s.slug}</option>
                 ))}
               </select>
             )}
@@ -344,9 +326,10 @@ export default function MySitePage() {
 
       {/* ── Payment Modal ─────────────────────────────────────── */}
       <PaymentModal 
-        isOpen={isPaymentModalOpen}
+        isOpen={isPaymentModalOpen} 
         onClose={() => setIsPaymentModalOpen(false)}
         onSubmit={handleSubmitPayment}
+        isOfferUnlocked={activeSite?.socialOffer?.status === 'APPROVED'}
         styles={styles}
       />
     </div>
