@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DevPortfolio | Portfolio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "inverse-primary": "#005ac2",
+                    "outline-variant": "#424754",
+                    "surface-variant": "#32353c",
+                    "surface": "#10131a",
+                    "surface-container-high": "#272a31",
+                    "on-primary": "#002e6a",
+                    "surface-container-lowest": "#0b0e15",
+                    "surface-container-low": "#191b23",
+                    "on-tertiary": "#502400",
+                    "secondary-fixed": "#71f8e4",
+                    "tertiary": "#ffb786",
+                    "outline": "#8c909f",
+                    "on-background": "#e1e2ec",
+                    "surface-tint": "#adc6ff",
+                    "on-primary-fixed": "#001a42",
+                    "on-error-container": "#ffdad6",
+                    "on-surface": "#e1e2ec",
+                    "on-secondary-fixed": "#00201c",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-tertiary-fixed-variant": "#723600",
+                    "tertiary-fixed-dim": "#ffb786",
+                    "on-secondary": "#003731",
+                    "background": "#10131a",
+                    "surface-container": "#1d2027",
+                    "primary": "#adc6ff",
+                    "error-container": "#93000a",
+                    "on-primary-container": "#00285d",
+                    "on-surface-variant": "#c2c6d6",
+                    "surface-dim": "#10131a",
+                    "surface-container-highest": "#32353c",
+                    "tertiary-fixed": "#ffdcc6",
+                    "on-error": "#690005",
+                    "inverse-surface": "#e1e2ec",
+                    "error": "#ffb4ab",
+                    "secondary": "#4fdbc8",
+                    "secondary-fixed-dim": "#4fdbc8",
+                    "on-tertiary-fixed": "#311400",
+                    "on-secondary-fixed-variant": "#005048",
+                    "on-tertiary-container": "#461f00",
+                    "tertiary-container": "#df7412",
+                    "surface-bright": "#363941",
+                    "primary-container": "#4d8eff",
+                    "primary-fixed": "#d8e2ff",
+                    "on-primary-fixed-variant": "#004395",
+                    "secondary-container": "#04b4a2",
+                    "inverse-on-surface": "#2e3038",
+                    "on-secondary-container": "#003f38"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "section-gap": "120px",
+                    "margin-mobile": "16px",
+                    "margin-desktop": "40px",
+                    "unit": "8px",
+                    "container-max": "1200px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "display-lg-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "caption": ["Inter"],
+                    "label-mono": ["JetBrains Mono"],
+                    "headline-md": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display-lg-mobile": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "caption": ["12px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                    "label-mono": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+            }
+          },
+        },
+      }
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="font-body-md text-body-md selection:bg-primary/30">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md dark:bg-surface/80 border-b border-white/10">
+<nav class="max-w-container-max mx-auto px-margin-desktop flex items-center justify-between h-20">
+<a class="font-headline-md text-headline-md font-bold text-on-surface dark:text-on-surface" href="#">DevPortfolio</a>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors active:scale-95 transition-transform" href="#about">About</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors active:scale-95 transition-transform" href="#skills">Skills</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors active:scale-95 transition-transform" href="#experience">Experience</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors active:scale-95 transition-transform" href="#projects">Projects</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors active:scale-95 transition-transform" href="#contact">Contact</a>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-full font-bold hover:brightness-110 active:scale-95 transition-all">
+                Hire Me
+            </button>
+</nav>
+</header>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative min-h-[921px] flex items-center justify-center overflow-hidden py-section-gap" id="hero">
+<div class="max-w-container-max mx-auto px-margin-desktop flex flex-col items-center text-center relative z-10">
+<div class="relative mb-8">
+<div class="w-48 h-48 md:w-56 md:h-56 rounded-full p-1 bg-gradient-to-tr from-primary to-secondary animate-pulse">
+<img class="w-full h-full object-cover rounded-full border-4 border-surface shadow-2xl" alt="Profile Photo" src="{{#if profilePhoto}}{{profilePhoto}}{{else}}https://via.placeholder.com/256{{/if}}"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-secondary text-on-secondary px-4 py-1 rounded-full text-caption font-label-mono shadow-lg">
+                        Available for Work
+                    </div>
+</div>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg mb-4 text-on-surface tracking-tight">
+                    {{name}}
+                </h1>
+<p class="font-headline-md text-headline-md text-primary mb-6">{{title}}</p>
+<p class="max-w-2xl font-body-lg text-body-lg text-on-surface-variant mb-10">
+                    {{summary}}
+                </p>
+<div class="flex flex-wrap justify-center gap-4 mb-12">
+<button class="bg-primary text-on-primary px-8 py-4 rounded-lg font-bold flex items-center gap-2 hover:shadow-[0_0_20px_rgba(173,198,255,0.3)] transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                        Download Resume
+                    </button>
+<button class="border border-primary text-primary px-8 py-4 rounded-lg font-bold flex items-center gap-2 hover:bg-primary/10 transition-all active:scale-95">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+                        Contact Me
+                    </button>
+</div>
+<div class="flex items-center gap-6 text-outline">
+<a class="hover:text-primary transition-colors active:scale-90" href="#"><span class="material-symbols-outlined text-3xl" data-icon="terminal">terminal</span></a>
+<a class="hover:text-primary transition-colors active:scale-90" href="#"><span class="material-symbols-outlined text-3xl" data-icon="code">code</span></a>
+<a class="hover:text-primary transition-colors active:scale-90" href="#"><span class="material-symbols-outlined text-3xl" data-icon="cloud">cloud</span></a>
+<a class="hover:text-primary transition-colors active:scale-90" href="#"><span class="material-symbols-outlined text-3xl" data-icon="database">database</span></a>
+<a class="hover:text-primary transition-colors active:scale-90" href="#"><span class="material-symbols-outlined text-3xl" data-icon="share">share</span></a>
+</div>
+</div>
+</section>
+<!-- About & Skills (Bento Grid Style) -->
+<section class="max-w-container-max mx-auto px-margin-desktop py-section-gap" id="about">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- About Card -->
+<div class="lg:col-span-2 glass-card p-10 rounded-xl">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="person">person</span>
+                        The Developer Behind the Code
+                    </h2>
+<div class="space-y-4 text-on-surface-variant font-body-lg text-body-lg">
+<p class="">With over 8 years of experience in the digital trenches, I've evolved from a curious script-kiddie into a disciplined architect of scalable systems. My philosophy is simple: write code that is as beautiful as it is functional.</p>
+<p class="">I thrive at the intersection of technical complexity and human-centric design. Whether it's optimizing a GraphQL resolver or fine-tuning a CSS transition, I approach every task with a craftsman's mindset and an engineer's precision.</p>
+</div>
+</div>
+<!-- Quick Stats / Skills -->
+<div class="glass-card p-10 rounded-xl" id="skills">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-6">Expertise</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary font-label-mono text-label-mono">React.js</span>
+{{#each skills}}
+<span class="px-3 py-1 rounded-full border border-secondary/30 bg-secondary/10 text-secondary font-label-mono text-label-mono">{{this}}</span>
+{{/each}}
+</div>
+</div>
+</div>
+</section>
+<!-- Experience Timeline -->
+<section class="bg-surface-container-low py-section-gap" id="experience">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="mb-16 text-center">
+<h2 class="font-display-lg text-display-lg text-on-surface mb-4">Professional Journey</h2>
+<p class="text-outline font-body-lg max-w-xl mx-auto">A roadmap of my technical growth and the impact I've made across diverse industries.</p>
+</div>
+<div class="relative max-w-4xl mx-auto">
+<!-- Vertical Line -->
+<div class="absolute left-0 md:left-1/2 transform md:-translate-x-1/2 h-full w-[2px] bg-outline-variant"></div>
+
+{{#each experience}}
+<div class="relative mb-20 md:mb-32 flex flex-col {{#if @odd}}md:flex-row-reverse{{else}}md:flex-row{{/if}} items-center w-full">
+<div class="md:w-1/2 {{#if @odd}}md:pl-12 pl-8 md:pl-0{{else}}md:pr-12 md:text-right pl-8 md:pl-0{{/if}} w-full">
+<h3 class="font-headline-md text-headline-md text-on-surface mt-1">{{this.role}}</h3>
+<h4 class="text-secondary font-bold mb-3">{{this.company}}</h4>
+<p class="text-on-surface-variant font-body-md">{{this.description}}</p>
+</div>
+<div class="absolute left-[-6px] md:left-1/2 transform md:-translate-x-1/2 w-4 h-4 bg-primary rounded-full border-4 border-background shadow-[0_0_10px_#adc6ff]"></div>
+<div class="md:w-1/2 {{#if @odd}}md:pr-12{{else}}md:pl-12{{/if}} w-full hidden md:block"></div>
+</div>
+{{/each}}
+
+</div>
+</div>
+</section>
+<!-- Projects Grid -->
+<section class="max-w-container-max mx-auto px-margin-desktop py-section-gap" id="projects">
+<div class="flex flex-col md:flex-row items-end justify-between mb-16 gap-4">
+<div>
+<h2 class="font-display-lg text-display-lg text-on-surface">Selected Works</h2>
+<p class="text-outline font-body-lg max-w-xl">A curated selection of projects that demonstrate my ability to solve complex problems.</p>
+</div>
+<a class="text-primary font-bold flex items-center gap-2 hover:underline group" href="#">
+                    View GitHub Archives
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
+<!-- Project 1 -->
+<div class="glass-card group rounded-xl overflow-hidden hover:-translate-y-2 transition-all duration-300">
+<div class="relative h-64 overflow-hidden">
+{{#each projects}}
+<div class="glass-card group rounded-xl overflow-hidden hover:-translate-y-2 transition-all duration-300">
+<div class="relative h-64 overflow-hidden">
+<div class="absolute inset-0 bg-surface-container-highest/20 group-hover:bg-transparent transition-colors z-10"></div>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="{{this.name}}" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBSU6QtSA_iS1Z27YEWjX6QNjhDZOToOkawLLUpsWp1fBfVJPYYtuEyo2XEzfu60ggXBydXFPS5TFCMkJUbAapnfYAgVz3MmVov9AjOsxNDU1ipWWDdpZdI4nrusFldBb6wggwbxX4Casgh2uqDfdU3IwfGjVdLiMhKKzvQ7qO_bor7nqYjzf-wShWO-T4h7iXL4psUxJkjApYMs7tCJ-5-p7ru_mog38gZe7emWWuq9AX6Bpya4H5En-IoIY9JlkZg7UBO0dHPjq0"/>
+</div>
+<div class="p-8">
+<h3 class="font-headline-md text-headline-md text-on-surface mb-3">{{this.name}}</h3>
+<p class="text-on-surface-variant font-body-md mb-6 line-clamp-3">{{this.description}}</p>
+<div class="flex flex-wrap gap-2 mb-8">
+{{#each this.techStack}}
+<span class="text-caption font-label-mono px-2 py-0.5 rounded border border-white/10 bg-white/5">{{this}}</span>
+{{/each}}
+</div>
+<div class="flex items-center gap-4">
+{{#if this.githubUrl}}
+<a class="flex-1 text-center py-2 rounded border border-outline hover:border-primary hover:text-primary transition-all font-bold" href="{{this.githubUrl}}" target="_blank">GitHub</a>
+{{/if}}
+{{#if this.liveUrl}}
+<a class="flex-1 text-center py-2 rounded bg-primary text-on-primary hover:brightness-110 transition-all font-bold" href="{{this.liveUrl}}" target="_blank">Live Demo</a>
+{{/if}}
+</div>
+</div>
+</div>
+{{/each}}
+</div>
+</section>
+<!-- Education & Certs -->
+<section class="bg-surface-container-low py-section-gap">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-10 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="school">school</span>
+                            Education
+                        </h2>
+<div class="space-y-8">
+{{#each education}}
+<div class="relative pl-8 border-l border-white/10">
+<div class="absolute left-[-5px] top-0 w-2 h-2 rounded-full bg-primary"></div>
+<h3 class="font-body-lg font-bold text-on-surface">{{this.degree}} in {{this.fieldOfStudy}}</h3>
+<p class="text-primary font-label-mono text-label-mono">{{this.institution}}</p>
+</div>
+{{/each}}
+</div>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-10 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="verified">verified</span>
+                            Certifications
+                        </h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="glass-card p-6 rounded-lg flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary" data-icon="cloud_done">cloud_done</span>
+<div>
+<h4 class="font-bold text-on-surface">AWS Solutions Architect</h4>
+<p class="text-caption text-outline">Professional</p>
+</div>
+</div>
+<div class="glass-card p-6 rounded-lg flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary" data-icon="terminal">terminal</span>
+<div>
+<h4 class="font-bold text-on-surface">Google Cloud Engineer</h4>
+<p class="text-caption text-outline">Professional</p>
+</div>
+</div>
+<div class="glass-card p-6 rounded-lg flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary" data-icon="security">security</span>
+<div>
+<h4 class="font-bold text-on-surface">CompTIA Security+</h4>
+<p class="text-caption text-outline">Active</p>
+</div>
+</div>
+<div class="glass-card p-6 rounded-lg flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary" data-icon="hub">hub</span>
+<div>
+<h4 class="font-bold text-on-surface">Certified Kubernetes</h4>
+<p class="text-caption text-outline">CKAD</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Contact Section -->
+<section class="max-w-container-max mx-auto px-margin-desktop py-section-gap" id="contact">
+<div class="glass-card rounded-3xl overflow-hidden grid grid-cols-1">
+<div class="p-10 md:p-16 bg-primary text-on-primary flex flex-col items-center text-center">
+<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-6">Let's build something extraordinary.</h2>
+<p class="font-body-lg mb-12 opacity-90">Open for full-time opportunities, high-stakes consulting, or just a technical chat about the future of the web.</p>
+<div class="space-y-6 flex flex-col items-center">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+<span class="font-label-mono">{{contact.email}}</span>
+</div>
+{{#if contact.phone}}
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined" data-icon="call">call</span>
+<span class="font-label-mono">{{contact.phone}}</span>
+</div>
+{{/if}}
+{{#if contact.location}}
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<span class="font-label-mono">{{contact.location}}</span>
+</div>
+{{/if}}
+</div>
+<div class="mt-16 flex gap-6 justify-center">
+<a class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/40 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+</a>
+<a class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/40 transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-white/10 w-full py-section-gap">
+<div class="max-w-container-max mx-auto px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-gutter">
+<div class="flex flex-col items-center md:items-start gap-4">
+<span class="font-label-mono text-label-mono text-on-surface">DevPortfolio</span>
+<p class="font-caption text-caption text-outline text-center md:text-left">© 2024 Developer Portfolio. Built with precision and passion.</p>
+</div>
+<div class="flex gap-8">
+{{#if social.github}}<a class="font-caption text-caption text-outline hover:text-primary transition-colors" href="{{social.github}}" target="_blank">GitHub</a>{{/if}}
+{{#if social.linkedin}}<a class="font-caption text-caption text-outline hover:text-primary transition-colors" href="{{social.linkedin}}" target="_blank">LinkedIn</a>{{/if}}
+{{#if social.twitter}}<a class="font-caption text-caption text-outline hover:text-primary transition-colors" href="{{social.twitter}}" target="_blank">Twitter</a>{{/if}}
+{{#if social.portfolioUrl}}<a class="font-caption text-caption text-outline hover:text-primary transition-colors" href="{{social.portfolioUrl}}" target="_blank">Portfolio</a>{{/if}}
+{{#if social.leetcode}}<a class="font-caption text-caption text-outline hover:text-primary transition-colors" href="{{social.leetcode}}" target="_blank">LeetCode</a>{{/if}}
+{{#if social.hackerrank}}<a class="font-caption text-caption text-outline hover:text-primary transition-colors" href="{{social.hackerrank}}" target="_blank">HackerRank</a>{{/if}}
+</div>
+</div>
+</footer>
+
+    <script src="script.js"></script>
+</body></html>

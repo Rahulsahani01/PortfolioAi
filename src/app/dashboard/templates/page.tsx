@@ -18,37 +18,6 @@ interface Template {
   imageSrc: string;
 }
 
-const TEMPLATES: Template[] = [
-  {
-    id: 'modern-dev',
-    title: 'Modern Developer',
-    description: 'A robust, high-performance layout designed for software engineers and technical leads.',
-    tags: ['Development', 'Top Rated'],
-    imageSrc: '/template-modern-dev.png',
-  },
-  {
-    id: 'creative-designer',
-    title: 'Creative Designer',
-    description: 'Dynamic grids and bold typography for UI/UX designers and art directors.',
-    tags: ['Design'],
-    imageSrc: '/template-creative-designer.png',
-  },
-  {
-    id: 'minimal-portfolio',
-    title: 'Minimal Portfolio',
-    description: 'A clean, distraction-free layout that puts the focus entirely on your quality of work.',
-    tags: ['Minimalist'],
-    imageSrc: '/template-minimal.png',
-  },
-  {
-    id: 'student-portfolio',
-    title: 'Student Portfolio',
-    description: 'Optimized for internships and first jobs, highlighting skills and education.',
-    tags: ['Academic'],
-    imageSrc: '/template-student.png',
-  },
-];
-
 export default function TemplatesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -56,12 +25,31 @@ export default function TemplatesPage() {
   const { token } = useAuth();
   const slug = searchParams.get('slug') || searchParams.get('siteId');
 
+  const [templates, setTemplates] = useState<Template[]>([]);
   const [selectedId, setSelectedId] = useState<string>('modern-dev');
   const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
+    fetch('/api/templates')
+      .then(res => res.json())
+      .then(data => {
+        if (data.templates) {
+          setTemplates(data.templates);
+          if (data.templates.length > 0 && !selectedId) {
+            setSelectedId(data.templates[0].id);
+          }
+        }
+      })
+      .catch(console.error);
+  }, []);
+
+  useEffect(() => {
     if (activeSite?.templateKey) {
-      setSelectedId(activeSite.templateKey);
+      // Map legacy IDs to new folder names
+      let templateKey = activeSite.templateKey;
+      if (templateKey === 'modern-dev') templateKey = 'devPortfolio';
+      if (templateKey === 'creative-designer') templateKey = 'Queenfolio';
+      setSelectedId(templateKey);
     }
   }, [activeSite?.templateKey]);
 
@@ -108,7 +96,11 @@ export default function TemplatesPage() {
     }
   };
 
-  const selectedTemplate = TEMPLATES.find(t => t.id === selectedId) || TEMPLATES[0];
+  if (templates.length === 0) {
+    return <div className={styles.shell} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>Loading templates...</div>;
+  }
+
+  const selectedTemplate = templates.find(t => t.id === selectedId) || templates[0];
 
   return (
     <div className={styles.shell}>
@@ -154,7 +146,7 @@ export default function TemplatesPage() {
 
           {/* Grid */}
           <div className={styles.grid}>
-            {TEMPLATES.map(template => {
+            {templates.map(template => {
               const isSelected = template.id === selectedId;
               return (
                 <div
@@ -179,23 +171,36 @@ export default function TemplatesPage() {
                   )}
 
                   <div className={styles.imageWrapper}>
-                    <img src={template.imageSrc} alt={template.title} className={styles.templateImage} />
-                    <div className={styles.imageOverlay}>
+                    <img src={template.imageSrc} alt={template.title} className={styles.templateImage} onError={(e) => { e.currentTarget.src = '/template-modern-dev.png'; }} />
+                    <div className={styles.imageOverlay} style={{ flexDirection: 'column', gap: '10px' }}>
+                      <button 
+                        className={styles.previewBtn} 
+                        onClick={(e) => { 
+                          e.stopPropagation(); 
+                          window.open(`/dashboard/preview?template=${template.id}`, '_blank');
+                        }}
+                      >
+                        <span className="material-symbols-outlined">visibility</span>
+                        Preview
+                      </button>
                       <button 
                         className={styles.previewBtn} 
                         onClick={(e) => { 
                           e.stopPropagation(); 
                           if (activeSite?.siteDetail?.status !== 'COMPLETED' || activeSite?.paymentStatus === 'PENDING') return;
-                          router.push('/dashboard/my-site'); 
+                          window.open(`/dashboard/preview?template=${template.id}&siteId=${activeSite.id}`, '_blank');
                         }}
                         title={activeSite?.paymentStatus === 'PENDING' ? 'now site is under review you can update it after site is published' : (activeSite?.siteDetail?.status !== 'COMPLETED' ? 'complete the site details first' : undefined)}
                         style={{
                           opacity: (activeSite?.siteDetail?.status !== 'COMPLETED' || activeSite?.paymentStatus === 'PENDING') ? 0.5 : 1,
-                          cursor: (activeSite?.siteDetail?.status !== 'COMPLETED' || activeSite?.paymentStatus === 'PENDING') ? 'not-allowed' : 'pointer'
+                          cursor: (activeSite?.siteDetail?.status !== 'COMPLETED' || activeSite?.paymentStatus === 'PENDING') ? 'not-allowed' : 'pointer',
+                          background: 'var(--primary-navy)',
+                          color: '#fff',
+                          border: '1px solid var(--primary-navy)'
                         }}
                       >
-                        <span className="material-symbols-outlined">visibility</span>
-                        Preview
+                        <span className="material-symbols-outlined">dataset</span>
+                        Preview with data
                       </button>
                     </div>
                   </div>

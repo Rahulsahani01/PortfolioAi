@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ARTHUR DESIGN | Creative Developer Portfolio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Playfair+Display:wght@100..900&family=Space+Mono:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#000000",
+                        "on-background": "#1b1c19",
+                        "on-secondary-container": "#6d0010",
+                        "on-tertiary-fixed-variant": "#464744",
+                        "surface-variant": "#e3e2dd",
+                        "outline-variant": "#c4c7c7",
+                        "tertiary-fixed-dim": "#c7c7c3",
+                        "surface-container": "#efeee9",
+                        "on-tertiary-container": "#848481",
+                        "primary": "#000000",
+                        "surface-bright": "#fbf9f4",
+                        "secondary": "#ae2f34",
+                        "surface": "#fbf9f4",
+                        "surface-container-high": "#e9e8e3",
+                        "secondary-fixed": "#ffdad8",
+                        "error": "#ba1a1a",
+                        "tertiary-container": "#1b1c1a",
+                        "inverse-surface": "#30312e",
+                        "secondary-fixed-dim": "#ffb3b0",
+                        "on-tertiary-fixed": "#1b1c1a",
+                        "primary-fixed": "#e5e2e1",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-low": "#f5f4ee",
+                        "surface-tint": "#5f5e5e",
+                        "surface-dim": "#dbdad5",
+                        "on-primary": "#ffffff",
+                        "outline": "#747878",
+                        "on-primary-fixed-variant": "#474746",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "surface-container-highest": "#e3e2dd",
+                        "inverse-primary": "#c8c6c5",
+                        "primary-container": "#1c1b1b",
+                        "on-surface-variant": "#444748",
+                        "on-surface": "#1b1c19",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#ff6b6b",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#f2f1ec",
+                        "on-primary-container": "#858383",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#e3e2df",
+                        "background": "#fbf9f4",
+                        "on-secondary-fixed": "#410006",
+                        "on-secondary-fixed-variant": "#8c1520"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "24px",
+                        "container-max": "1440px",
+                        "margin-desktop": "64px",
+                        "unit": "8px",
+                        "section-gap": "160px",
+                        "gutter": "32px"
+                    },
+                    "fontFamily": {
+                        "display-lg-mobile": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Playfair Display"],
+                        "label-caps": ["Space Mono"],
+                        "body-lg": ["Inter"],
+                        "headline-md": ["Playfair Display"],
+                        "display-lg": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "display-lg-mobile": ["48px", {"lineHeight": "1.1", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-sm": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "body-lg": ["20px", {"lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "headline-md": ["42px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "display-lg": ["84px", {"lineHeight": "1.05", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-background text-primary font-body-md selection:bg-secondary-container selection:text-white overflow-x-hidden">
+<div class="grain-overlay"></div>
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 z-50 bg-background/90 backdrop-blur-sm border-b border-outline-variant">
+<div class="font-headline-sm text-headline-sm font-bold text-primary">ARTHUR DESIGN</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#about">About</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#skills">Skills</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#experience">Experience</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#projects">Projects</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#education">Education</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#contact">Contact</a>
+</div>
+</nav>
+<main class="max-w-container-max mx-auto">
+<!-- Hero Section -->
+<section class="min-h-screen flex flex-col justify-center px-margin-mobile md:px-margin-desktop pt-32 pb-section-gap relative" id="hero">
+<div class="grid grid-cols-12 gap-gutter items-center">
+<div class="col-span-12 md:col-span-8">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-8">
+                        {{name}} <span class="relative"><span class="absolute bottom-2 left-0 w-full h-1 bg-secondary-container -z-10"></span></span>
+</h1>
+<p class="font-body-lg text-body-lg max-w-xl text-on-surface-variant mb-12">
+                        {{summary}}
+                    </p>
+<div class="flex flex-wrap gap-8 items-center mb-12">
+{{#if social.github}}<a class="font-label-caps text-label-caps border-b-2 border-primary pb-1 btn-hover-coral transition-all duration-300" href="{{social.github}}" target="_blank">GITHUB</a>{{/if}}
+{{#if social.linkedin}}<a class="font-label-caps text-label-caps border-b-2 border-primary pb-1 btn-hover-coral transition-all duration-300" href="{{social.linkedin}}" target="_blank">LINKEDIN</a>{{/if}}
+{{#if social.twitter}}<a class="font-label-caps text-label-caps border-b-2 border-primary pb-1 btn-hover-coral transition-all duration-300" href="{{social.twitter}}" target="_blank">TWITTER</a>{{/if}}
+{{#if social.portfolioUrl}}<a class="font-label-caps text-label-caps border-b-2 border-primary pb-1 btn-hover-coral transition-all duration-300" href="{{social.portfolioUrl}}" target="_blank">PORTFOLIO</a>{{/if}}
+</div>
+<button class="bg-secondary-container text-white px-10 py-4 rounded-full font-label-caps text-label-caps tracking-widest hover:brightness-110 transition-all active:scale-95 shadow-lg shadow-secondary-container/20">
+                        DOWNLOAD RESUME
+                    </button>
+</div>
+<div class="col-span-12 md:col-span-4 mt-12 md:mt-0">
+<div class="relative group">
+<div class="absolute -inset-4 border border-outline-variant rotate-3 group-hover:rotate-0 transition-transform duration-500"></div>
+<div class="aspect-[4/5] bg-surface-container overflow-hidden rotate-[-3deg] group-hover:rotate-0 transition-transform duration-500 shadow-2xl">
+<img class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" alt="Profile" src="{{#if profilePhoto}}{{profilePhoto}}{{else}}https://via.placeholder.com/400x500{{/if}}"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- About Section -->
+<section class="px-margin-mobile md:px-margin-desktop py-section-gap" id="about">
+<div class="grid grid-cols-12 gap-gutter items-center">
+<div class="col-span-12 md:col-span-6 md:col-start-2">
+<h2 class="font-label-caps text-label-caps text-secondary mb-8">THE PHILOSOPHY</h2>
+<p class="font-headline-sm text-headline-sm italic leading-relaxed text-primary">
+                        "I believe that code is the ink of the modern age. Great software shouldn't just function perfectly; it should possess the same rhythm, balance, and intentionality as a beautifully designed book."
+                    </p>
+</div>
+<div class="col-span-12 md:col-span-4 md:col-start-9 flex justify-center">
+<div class="w-64 h-64 relative">
+<div class="absolute inset-0 bg-secondary-container rounded-full opacity-20 blur-3xl animate-pulse"></div>
+<svg class="w-full h-full text-secondary-container fill-current" viewbox="0 0 200 200">
+<path d="M40,-68.2C51.1,-62.4,59.3,-50.2,65.6,-37.2C71.9,-24.1,76.3,-10.1,74.5,3.3C72.8,16.7,64.8,29.5,55.5,40.7C46.3,51.9,35.7,61.6,23.1,67.3C10.5,73,14.1,74.8,0.3,74.2C-13.4,73.6,-26.8,70.7,-38.7,64.1C-50.6,57.5,-61,47.2,-67.2,34.9C-73.4,22.6,-75.4,8.3,-73.4,-5.2C-71.4,-18.7,-65.4,-31.4,-56.3,-41.8C-47.2,-52.1,-35.1,-60,-22.4,-65.2C-9.8,-70.4,3.4,-72.9,16.5,-71.4C29.6,-69.9,33.4,-64.5,40,-68.2Z" transform="translate(100 100)"></path>
+</svg>
+</div>
+</div>
+</div>
+</section>
+<!-- Skills Section -->
+<section class="px-margin-mobile md:px-margin-desktop py-section-gap" id="skills">
+<h2 class="font-label-caps text-label-caps text-secondary mb-16 text-center">TECHNICAL ARSENAL</h2>
+<div class="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto">
+{{#each skills}}
+<span class="px-8 py-3 rounded-full border border-primary font-label-caps text-lg hover:bg-primary hover:text-white transition-all cursor-default">{{this}}</span>
+{{/each}}
+
+</div>
+</section>
+<!-- Experience Section -->
+<section class="px-margin-mobile md:px-margin-desktop py-section-gap" id="experience">
+<h2 class="font-label-caps text-label-caps text-secondary mb-16">CHRONOLOGY</h2>
+<div class="flex flex-col">
+{{#each experience}}
+<div class="group py-12 flex flex-col md:flex-row md:items-baseline gap-8 transition-all duration-500">
+<div class="md:w-1/3">
+<h3 class="font-headline-sm text-headline-sm group-hover:text-secondary transition-colors">{{this.role}}</h3>
+</div>
+<div class="md:w-2/3">
+<p class="font-label-caps text-label-caps mb-4 text-on-surface-variant">{{this.company}}</p>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                            {{this.description}}
+                        </p>
+</div>
+</div>
+<div class="editorial-line"></div>
+{{/each}}
+
+</div>
+</section>
+<!-- Projects Section -->
+<section class="px-margin-mobile md:px-margin-desktop py-section-gap" id="projects">
+<h2 class="font-label-caps text-label-caps text-secondary mb-16 text-right">SELECTED WORKS</h2>
+<div class="space-y-48">
+{{#each projects}}
+<div class="grid grid-cols-12 gap-gutter items-center">
+{{#if @even}}
+<div class="col-span-12 md:col-span-5 order-2 md:order-1">
+<h3 class="font-headline-md text-headline-md mb-6">{{this.name}}</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8">
+                            {{this.description}}
+                        </p>
+<div class="flex flex-wrap gap-3 mb-10">
+{{#each this.techStack}}
+<span class="font-label-caps text-[10px] px-3 py-1 border border-outline-variant">{{this}}</span>
+{{/each}}
+</div>
+<div class="flex gap-6">
+{{#if this.liveUrl}}
+<a class="font-label-caps text-label-caps border-b-2 border-primary pb-1 btn-hover-coral transition-all" href="{{this.liveUrl}}" target="_blank">VIEW PROJECT</a>
+{{/if}}
+{{#if this.githubUrl}}
+<a class="font-label-caps text-label-caps border-b-2 border-primary pb-1 btn-hover-coral transition-all" href="{{this.githubUrl}}" target="_blank">GITHUB</a>
+{{/if}}
+</div>
+</div>
+<div class="col-span-12 md:col-span-7 order-1 md:order-2 project-image-container overflow-hidden rounded-lg shadow-xl">
+<img class="w-full h-full object-cover transition-transform duration-700 ease-out" alt="{{this.name}}" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAl4GYzy56gAv6iQMfVZbdv7WAff-TzgIlt1Hn-RaPkmXB6_AXVOkOx4RZeX2f7U35CIipejI9btEFr0oXhSgVRrcEcto13rc6siCdRFN0G4agdbmR9diAbAhN_GX5S_uZVjF-lMrT_P3dQPfi-qvRc7NVefxk8ziMMN6AUZlFFiG6bd5-WJvVyVyeiPSW23IOvQPvAu4wKACNe4F8rGeKxSjtIwaa9rq0mjmmS_NHIJffg4GNW3xxpObVWt3aDgMx244u8TyYuAjs"/>
+</div>
+{{else}}
+<div class="col-span-12 md:col-span-7 project-image-container overflow-hidden rounded-lg shadow-xl">
+<img class="w-full h-full object-cover transition-transform duration-700 ease-out" alt="{{this.name}}" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcFdDJ09li7N5ZewHhJj228FgFUj4lJHq-DnxXiIg2mBuCgOSJrAQHl2QC_LtXKi3GVJDkpzf-VsbYuft7a117l2nXSA-f368slea0in0JHh6ql8r85sSSGcwFmoKXZ_BSvHu5yuhh5Ynp7IG_Ei7nh76pkbxnsDCsEdZcsFLgzlfT8KtohvOMcHVw3ycp-0DYmjBaUeDYJFDN_A-bUTR6rY374KpFwfoak5dXtwwAhQxbkdzgjNARS_GnGy37TBefmJ0gWEMkiTQ"/>
+</div>
+<div class="col-span-12 md:col-span-5 md:pl-12">
+<h3 class="font-headline-md text-headline-md mb-6">{{this.name}}</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8">
+                            {{this.description}}
+                        </p>
+<div class="flex flex-wrap gap-3 mb-10">
+{{#each this.techStack}}
+<span class="font-label-caps text-[10px] px-3 py-1 border border-outline-variant">{{this}}</span>
+{{/each}}
+</div>
+<div class="flex gap-6">
+{{#if this.liveUrl}}
+<a class="font-label-caps text-label-caps border-b-2 border-primary pb-1 btn-hover-coral transition-all" href="{{this.liveUrl}}" target="_blank">VIEW PROJECT</a>
+{{/if}}
+{{#if this.githubUrl}}
+<a class="font-label-caps text-label-caps border-b-2 border-primary pb-1 btn-hover-coral transition-all" href="{{this.githubUrl}}" target="_blank">GITHUB</a>
+{{/if}}
+</div>
+</div>
+{{/if}}
+</div>
+{{/each}}
+</div>
+</section>
+<!-- Education Section -->
+<section class="px-margin-mobile md:px-margin-desktop py-section-gap" id="education">
+<h2 class="font-label-caps text-label-caps text-secondary mb-12">FOUNDATIONS</h2>
+<div class="max-w-2xl">
+{{#each education}}
+<h3 class="font-headline-sm text-headline-sm mb-4">{{this.institution}}</h3>
+<p class="font-body-lg text-body-lg text-on-surface-variant">{{this.degree}} in {{this.fieldOfStudy}}</p>
+{{#unless @last}}<div class="h-px w-24 bg-secondary-container my-8"></div>{{/unless}}
+{{/each}}
+</div>
+</section>
+<!-- Footer / Contact Section -->
+<footer class="bg-surface-container py-section-gap px-margin-mobile md:px-margin-desktop" id="contact">
+<div class="max-w-container-max mx-auto">
+<div class="grid grid-cols-12 gap-gutter">
+<div class="col-span-12 md:col-span-8">
+<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-16">
+                            Let's build <br/> something <span class="text-secondary italic">meaningful.</span>
+</h2>
+<div class="flex flex-col gap-6 mb-16">
+<a class="font-headline-sm text-headline-sm hover:text-secondary transition-colors underline decoration-1 underline-offset-8 decoration-outline-variant hover:decoration-secondary" href="mailto:{{contact.email}}">{{contact.email}}</a>
+{{#if contact.phone}}<p class="font-headline-sm text-headline-sm">{{contact.phone}}</p>{{/if}}
+{{#if contact.location}}<p class="font-headline-sm text-headline-sm">{{contact.location}}</p>{{/if}}
+</div>
+</div>
+<div class="col-span-12 md:col-span-4 flex flex-col justify-end md:items-end">
+<div class="flex gap-8 mb-12">
+{{#if social.github}}
+<a class="text-primary hover:text-secondary transition-colors" href="{{social.github}}" target="_blank">
+<span class="material-symbols-outlined text-4xl">code</span>
+</a>
+{{/if}}
+{{#if social.linkedin}}
+<a class="text-primary hover:text-secondary transition-colors" href="{{social.linkedin}}" target="_blank">
+<span class="material-symbols-outlined text-4xl">public</span>
+</a>
+{{/if}}
+{{#if social.twitter}}
+<a class="text-primary hover:text-secondary transition-colors" href="{{social.twitter}}" target="_blank">
+<span class="material-symbols-outlined text-4xl">alternate_email</span>
+</a>
+{{/if}}
+</div>
+<p class="font-label-caps text-label-caps text-on-tertiary-fixed-variant text-right">
+                            © 2024 ARTHUR DESIGN. <br/> BUILT WITH INTENT.
+                        </p>
+</div>
+</div>
+</div>
+</footer>
+</main>
+
+    <script src="script.js"></script>
+</body></html>
