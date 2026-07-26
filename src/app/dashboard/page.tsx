@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ActiveSiteBadge from '../../components/ActiveSiteBadge';
@@ -27,6 +27,14 @@ export default function UserDashboard() {
     }
   }, [searchParams, router]);
 
+  const hasFetchedRef = useRef(false);
+  useEffect(() => {
+    if (!hasFetchedRef.current) {
+      hasFetchedRef.current = true;
+      refreshSites();
+    }
+  }, [refreshSites]);
+
   // Removed local storage useEffects as context handles it
 
   const openCreateWizard = () => {
@@ -48,7 +56,7 @@ export default function UserDashboard() {
       await refreshSites(); // wait for context to update
       setActiveSiteId(data.site.id);
       setIsModalOpen(false);
-      router.push(`/dashboard/resume?siteId=${data.site.id}`);
+      router.push(`/dashboard/siteDetails?siteId=${data.site.id}`);
     } catch (err: any) {
       alert(err.message || 'Failed to create site');
     } finally {

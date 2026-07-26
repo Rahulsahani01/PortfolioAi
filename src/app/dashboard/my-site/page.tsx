@@ -182,11 +182,39 @@ export default function MySitePage() {
                   </div>
 
                   <div className={styles.controlButtonsWrap}>
-                    <Link href="/dashboard/resume" className={styles.btnPrimary} style={{ textDecoration: 'none' }}>
+                    <Link 
+                      href={activeSite?.paymentStatus === 'PENDING' ? '#' : "/dashboard/siteDetails"} 
+                      className={styles.btnPrimary} 
+                      onClick={(e) => {
+                        if (activeSite?.paymentStatus === 'PENDING') {
+                          e.preventDefault();
+                        }
+                      }}
+                      title={activeSite?.paymentStatus === 'PENDING' ? 'now site is under review you can update it after site is published' : undefined}
+                      style={{ 
+                        textDecoration: 'none',
+                        opacity: activeSite?.paymentStatus === 'PENDING' ? 0.5 : 1,
+                        cursor: activeSite?.paymentStatus === 'PENDING' ? 'not-allowed' : 'pointer'
+                      }}
+                    >
                       <span className="material-symbols-outlined">edit</span>
                       Edit Content
                     </Link>
-                    <Link href="/dashboard/templates" className={styles.btnSecondary} style={{ textDecoration: 'none' }}>
+                    <Link 
+                      href={activeSite?.paymentStatus === 'PENDING' ? '#' : "/dashboard/templates"} 
+                      className={styles.btnSecondary} 
+                      onClick={(e) => {
+                        if (activeSite?.paymentStatus === 'PENDING') {
+                          e.preventDefault();
+                        }
+                      }}
+                      title={activeSite?.paymentStatus === 'PENDING' ? 'now site is under review you can update it after site is published' : undefined}
+                      style={{ 
+                        textDecoration: 'none',
+                        opacity: activeSite?.paymentStatus === 'PENDING' ? 0.5 : 1,
+                        cursor: activeSite?.paymentStatus === 'PENDING' ? 'not-allowed' : 'pointer'
+                      }}
+                    >
                       <span className="material-symbols-outlined">dashboard_customize</span>
                       Change Template
                     </Link>

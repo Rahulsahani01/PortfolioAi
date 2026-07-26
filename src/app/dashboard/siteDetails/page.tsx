@@ -133,7 +133,7 @@ export default function ResumePage() {
   return (
     <div className={styles.shell}>
       {/* ── Sidebar ───────────────────────────────────────── */}
-      <Sidebar styles={styles} activePath="/dashboard/resume" />
+      <Sidebar styles={styles} activePath="/dashboard/siteDetails" />
 
       {/* ── Main ─────────────────────────────────────────── */}
       <main className={styles.mainArea}>
@@ -344,7 +344,18 @@ export default function ResumePage() {
               <div className={styles.actionBar}>
                 <div style={{flex: 1}} />
                 <div className={styles.actionBarRight}>
-                  <button className={styles.saveBtn} onClick={handleSaveDetails} disabled={isSaving}>
+                  <button 
+                    className={styles.saveBtn} 
+                    onClick={() => {
+                      if (isSaving || activeSite?.paymentStatus === 'PENDING') return;
+                      handleSaveDetails();
+                    }} 
+                    title={activeSite?.paymentStatus === 'PENDING' ? 'now site is under review you can update it after site is published' : undefined}
+                    style={{
+                      opacity: (isSaving || activeSite?.paymentStatus === 'PENDING') ? 0.5 : 1,
+                      cursor: (isSaving || activeSite?.paymentStatus === 'PENDING') ? 'not-allowed' : 'pointer'
+                    }}
+                  >
                     {isSaving ? 'Saving...' : 'Save Details'}
                     <span className="material-symbols-outlined">check</span>
                   </button>

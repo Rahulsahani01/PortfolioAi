@@ -27,7 +27,7 @@ export default function Sidebar({ styles, activePath, onCreateSite, disableCreat
       <nav className={styles.sidebarNav}>
         {[
           { icon: 'dashboard', label: 'Dashboard', href: '/dashboard' },
-          { icon: 'description', label: 'Site Details', href: '/dashboard/resume' },
+          { icon: 'description', label: 'Site Details', href: '/dashboard/siteDetails' },
           { icon: 'web_stories', label: 'Templates', href: '/dashboard/templates' },
           { icon: 'language', label: 'My Site', href: '/dashboard/my-site' },
           { icon: 'sell', label: 'Pricing', href: '/dashboard/pricing' },

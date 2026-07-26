@@ -81,8 +81,8 @@ export default function TemplatesPage() {
   const canGenerate = !!activeSite && activeSite?.siteDetail?.status === 'COMPLETED' && activeSite?.paymentStatus !== 'PENDING';
   const getDisabledReason = () => {
     if (!activeSite) return 'No active site';
-    if (activeSite.paymentStatus === 'PENDING') return 'Site is under review';
-    if (activeSite.siteDetail?.status !== 'COMPLETED') return 'Complete the site details first';
+    if (activeSite.paymentStatus === 'PENDING') return 'now site is under review you can update it after site is published';
+    if (activeSite.siteDetail?.status !== 'COMPLETED') return 'complete the site details first';
     return undefined;
   };
 
@@ -159,8 +159,16 @@ export default function TemplatesPage() {
               return (
                 <div
                   key={template.id}
-                  onClick={() => setSelectedId(template.id)}
+                  onClick={() => {
+                    if (activeSite?.paymentStatus === 'PENDING') return;
+                    setSelectedId(template.id);
+                  }}
+                  title={activeSite?.paymentStatus === 'PENDING' ? 'now site is under review you can update it after site is published' : undefined}
                   className={`${styles.templateCard} ${isSelected ? styles.templateCardSelected : ''}`}
+                  style={{
+                    opacity: activeSite?.paymentStatus === 'PENDING' ? 0.7 : 1,
+                    cursor: activeSite?.paymentStatus === 'PENDING' ? 'not-allowed' : undefined
+                  }}
                 >
                   {isSelected && (
                     <div className={styles.checkBadge}>
@@ -180,7 +188,7 @@ export default function TemplatesPage() {
                           if (activeSite?.siteDetail?.status !== 'COMPLETED' || activeSite?.paymentStatus === 'PENDING') return;
                           router.push('/dashboard/my-site'); 
                         }}
-                        title={activeSite?.paymentStatus === 'PENDING' ? 'Site is under review' : (activeSite?.siteDetail?.status !== 'COMPLETED' ? 'complete the site details first' : undefined)}
+                        title={activeSite?.paymentStatus === 'PENDING' ? 'now site is under review you can update it after site is published' : (activeSite?.siteDetail?.status !== 'COMPLETED' ? 'complete the site details first' : undefined)}
                         style={{
                           opacity: (activeSite?.siteDetail?.status !== 'COMPLETED' || activeSite?.paymentStatus === 'PENDING') ? 0.5 : 1,
                           cursor: (activeSite?.siteDetail?.status !== 'COMPLETED' || activeSite?.paymentStatus === 'PENDING') ? 'not-allowed' : 'pointer'
@@ -216,7 +224,13 @@ export default function TemplatesPage() {
                       className={`${styles.selectBtn} ${isSelected ? styles.selectBtnSelected : ''}`}
                       onClick={(e) => {
                         e.stopPropagation();
+                        if (activeSite?.paymentStatus === 'PENDING') return;
                         setSelectedId(template.id);
+                      }}
+                      title={activeSite?.paymentStatus === 'PENDING' ? 'now site is under review you can update it after site is published' : undefined}
+                      style={{
+                        opacity: activeSite?.paymentStatus === 'PENDING' ? 0.5 : 1,
+                        cursor: activeSite?.paymentStatus === 'PENDING' ? 'not-allowed' : 'pointer'
                       }}
                     >
                       {isSelected ? 'Selected' : 'Select Template'}

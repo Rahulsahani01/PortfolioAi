@@ -10,8 +10,10 @@ export const apiFetch = async (endpoint: string, options: FetchOptions = {}) => 
 
   const headers = new Headers(customHeaders);
   
-  if (token) {
-    headers.set('Authorization', `Bearer ${token}`);
+  const resolvedToken = token || (typeof window !== 'undefined' ? localStorage.getItem('access_token') : null);
+  
+  if (resolvedToken) {
+    headers.set('Authorization', `Bearer ${resolvedToken}`);
   }
 
   // If it's FormData, don't set Content-Type (browser will automatically set it with the correct boundary)
