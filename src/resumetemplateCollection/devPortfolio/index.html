@@ -211,7 +211,7 @@
 <section class="max-w-container-max mx-auto px-margin-desktop py-section-gap" id="projects">
 <div class="flex flex-col md:flex-row items-end justify-between mb-16 gap-4">
 <div>
-<h2 class="font-display-lg text-display-lg text-on-surface">Selected Works</h2>
+<h2 class="font-display-lg text-display-lg text-on-surface">Check Work</h2>
 <p class="text-outline font-body-lg max-w-xl">A curated selection of projects that demonstrate my ability to solve complex problems.</p>
 </div>
 <a class="text-primary font-bold flex items-center gap-2 hover:underline group" href="#">
@@ -220,16 +220,13 @@
 </a>
 </div>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
-<!-- Project 1 -->
-<div class="glass-card group rounded-xl overflow-hidden hover:-translate-y-2 transition-all duration-300">
-<div class="relative h-64 overflow-hidden">
 {{#each projects}}
-<div class="glass-card group rounded-xl overflow-hidden hover:-translate-y-2 transition-all duration-300">
-<div class="relative h-64 overflow-hidden">
+<div class="glass-card group rounded-xl overflow-hidden hover:-translate-y-2 transition-all duration-300 flex flex-col">
+<div class="relative h-64 overflow-hidden shrink-0">
 <div class="absolute inset-0 bg-surface-container-highest/20 group-hover:bg-transparent transition-colors z-10"></div>
 <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="{{this.name}}" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBSU6QtSA_iS1Z27YEWjX6QNjhDZOToOkawLLUpsWp1fBfVJPYYtuEyo2XEzfu60ggXBydXFPS5TFCMkJUbAapnfYAgVz3MmVov9AjOsxNDU1ipWWDdpZdI4nrusFldBb6wggwbxX4Casgh2uqDfdU3IwfGjVdLiMhKKzvQ7qO_bor7nqYjzf-wShWO-T4h7iXL4psUxJkjApYMs7tCJ-5-p7ru_mog38gZe7emWWuq9AX6Bpya4H5En-IoIY9JlkZg7UBO0dHPjq0"/>
 </div>
-<div class="p-8">
+<div class="p-8 flex flex-col flex-grow">
 <h3 class="font-headline-md text-headline-md text-on-surface mb-3">{{this.name}}</h3>
 <p class="text-on-surface-variant font-body-md mb-6 line-clamp-3">{{this.description}}</p>
 <div class="flex flex-wrap gap-2 mb-8">
@@ -237,7 +234,7 @@
 <span class="text-caption font-label-mono px-2 py-0.5 rounded border border-white/10 bg-white/5">{{this}}</span>
 {{/each}}
 </div>
-<div class="flex items-center gap-4">
+<div class="flex items-center gap-4 mt-auto">
 {{#if this.githubUrl}}
 <a class="flex-1 text-center py-2 rounded border border-outline hover:border-primary hover:text-primary transition-all font-bold" href="{{this.githubUrl}}" target="_blank">GitHub</a>
 {{/if}}

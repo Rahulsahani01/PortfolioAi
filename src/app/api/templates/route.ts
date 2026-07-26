@@ -18,21 +18,27 @@ export async function GET() {
     const templates = folders.map(folder => {
       let title = folder;
       let imageSrc = `/${folder}.png`; // fallback
+      let description = `A beautiful template for your next big project.`;
+      let tags = ['Portfolio'];
 
       // specific mapping for devPortfolio
       if (folder === 'devPortfolio') {
         title = 'Modern Developer';
         imageSrc = '/template-modern-dev.png';
+        description = 'A robust, high-performance layout designed for software engineers and technical leads.';
+        tags = ['Development', 'Top Rated'];
       } else if (folder === 'Queenfolio') {
-        title = 'Queenfolio';
+        title = 'Creative Designer';
         imageSrc = '/template-creative-designer.png';
+        description = 'Dynamic grids and bold typography for UI/UX designers and art directors.';
+        tags = ['Design', 'Creative'];
       }
 
       return {
         id: folder,
         title,
-        description: `Template for ${title}`,
-        tags: ['Portfolio'],
+        description,
+        tags,
         imageSrc
       };
     });

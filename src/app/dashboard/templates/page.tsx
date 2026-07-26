@@ -65,7 +65,7 @@ export default function TemplatesPage() {
 
   const activeSiteName = activeSite?.slug || slug;
   const activeSiteStatus = activeSite?.status || 'Draft';
-  
+
   const canGenerate = !!activeSite && activeSite?.siteDetail?.status === 'COMPLETED' && activeSite?.paymentStatus !== 'PENDING';
   const getDisabledReason = () => {
     if (!activeSite) return 'No active site';
@@ -172,35 +172,16 @@ export default function TemplatesPage() {
 
                   <div className={styles.imageWrapper}>
                     <img src={template.imageSrc} alt={template.title} className={styles.templateImage} onError={(e) => { e.currentTarget.src = '/template-modern-dev.png'; }} />
-                    <div className={styles.imageOverlay} style={{ flexDirection: 'column', gap: '10px' }}>
-                      <button 
-                        className={styles.previewBtn} 
-                        onClick={(e) => { 
-                          e.stopPropagation(); 
+                    <div className={styles.imageOverlay}>
+                      <button
+                        className={styles.previewBtn}
+                        onClick={(e) => {
+                          e.stopPropagation();
                           window.open(`/dashboard/preview?template=${template.id}`, '_blank');
                         }}
                       >
                         <span className="material-symbols-outlined">visibility</span>
                         Preview
-                      </button>
-                      <button 
-                        className={styles.previewBtn} 
-                        onClick={(e) => { 
-                          e.stopPropagation(); 
-                          if (activeSite?.siteDetail?.status !== 'COMPLETED' || activeSite?.paymentStatus === 'PENDING') return;
-                          window.open(`/dashboard/preview?template=${template.id}&siteId=${activeSite.id}`, '_blank');
-                        }}
-                        title={activeSite?.paymentStatus === 'PENDING' ? 'now site is under review you can update it after site is published' : (activeSite?.siteDetail?.status !== 'COMPLETED' ? 'complete the site details first' : undefined)}
-                        style={{
-                          opacity: (activeSite?.siteDetail?.status !== 'COMPLETED' || activeSite?.paymentStatus === 'PENDING') ? 0.5 : 1,
-                          cursor: (activeSite?.siteDetail?.status !== 'COMPLETED' || activeSite?.paymentStatus === 'PENDING') ? 'not-allowed' : 'pointer',
-                          background: 'var(--primary-navy)',
-                          color: '#fff',
-                          border: '1px solid var(--primary-navy)'
-                        }}
-                      >
-                        <span className="material-symbols-outlined">dataset</span>
-                        Preview with data
                       </button>
                     </div>
                   </div>
@@ -259,23 +240,43 @@ export default function TemplatesPage() {
                 <p className={styles.infoSub}>Click preview to see your actual content in this layout.</p>
               </div>
             </div>
-            <div>
-              <button 
-                className={styles.previewDataBtn} 
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <button
+                className={styles.previewDataBtn}
+                onClick={() => {
+                  if (!canGenerate || !activeSite) return;
+                  window.open(`/dashboard/preview?template=${selectedId}&siteId=${activeSite.id}`, '_blank');
+                }}
+                style={{
+                  opacity: canGenerate ? 1 : 0.5,
+                  cursor: canGenerate ? 'pointer' : 'not-allowed',
+                  background: 'var(--primary-navy)',
+                  color: '#fff',
+                  border: '1px solid var(--primary-navy)'
+                }}
+                title={getDisabledReason()}
+              >
+                <span className="material-symbols-outlined">
+                  dataset
+                </span>
+                Preview with My Data
+              </button>
+              <button
+                className={styles.previewDataBtn}
                 onClick={() => {
                   if (!canGenerate) return;
                   handleGenerateSite();
                 }}
-                style={{ 
-                  opacity: canGenerate && !isGenerating ? 1 : 0.5, 
-                  cursor: canGenerate && !isGenerating ? 'pointer' : 'not-allowed' 
+                style={{
+                  opacity: canGenerate && !isGenerating ? 1 : 0.5,
+                  cursor: canGenerate && !isGenerating ? 'pointer' : 'not-allowed'
                 }}
                 title={getDisabledReason()}
               >
                 <span className="material-symbols-outlined">
                   publish
                 </span>
-                {isGenerating ? 'Generating...' : 'Preview with Data'}
+                {isGenerating ? 'Generating...' : 'Apply Template'}
               </button>
             </div>
           </div>
