@@ -38,8 +38,24 @@ const SitesContext = createContext<SitesContextType | undefined>(undefined);
 export const SitesProvider = ({ children }: { children: ReactNode }) => {
   const { isAuthenticated, token } = useAuth();
   const [sites, setSites] = useState<Site[]>([]);
-  const [activeSiteId, setActiveSiteId] = useState<string | null>(null);
+  const [activeSiteId, setActiveSiteIdState] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('activeSiteId');
+    }
+    return null;
+  });
   const [isLoading, setIsLoading] = useState(true);
+
+  const setActiveSiteId = (id: string | null) => {
+    setActiveSiteIdState(id);
+    if (typeof window !== 'undefined') {
+      if (id) {
+        localStorage.setItem('activeSiteId', id);
+      } else {
+        localStorage.removeItem('activeSiteId');
+      }
+    }
+  };
 
   const fetchSites = async (siteId?: string) => {
     if (!isAuthenticated || !token) {
@@ -60,11 +76,20 @@ export const SitesProvider = ({ children }: { children: ReactNode }) => {
         }
       } else {
         setSites(sitesArray);
-        // Auto-select first site if none selected and sites exist
-        if (!activeSiteId && sitesArray.length > 0) {
+        
+        let currentActive = activeSiteId;
+        if (typeof window !== 'undefined' && !currentActive) {
+          currentActive = localStorage.getItem('activeSiteId');
+        }
+
+        const isValid = sitesArray.some((s: Site) => s.id === currentActive);
+        
+        if (!isValid && sitesArray.length > 0) {
           setActiveSiteId(sitesArray[0].id);
         } else if (sitesArray.length === 0) {
           setActiveSiteId(null);
+        } else if (currentActive && !activeSiteId) {
+          setActiveSiteId(currentActive);
         }
       }
     } catch (err) {

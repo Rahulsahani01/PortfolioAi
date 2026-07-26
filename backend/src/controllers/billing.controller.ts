@@ -57,6 +57,12 @@ export const verifyPayment = async (req: Request, res: Response, next: NextFunct
     // For mock purposes, we'll generate a fake URL
     const screenshotUrl = `https://mock-storage.com/${req.file.originalname}`;
 
+    // Check if the UTR number is already used by another payment
+    const existingUtr = await prisma.payment.findUnique({ where: { providerId: utrNumber } });
+    if (existingUtr && existingUtr.id !== paymentId) {
+      return res.status(400).json({ error: { message: 'This UTR number has already been submitted for another payment.' } });
+    }
+
     // Save the UTR number and screenshot URL for admin review
     const updatedPayment = await prisma.payment.update({
       where: { id: paymentId },

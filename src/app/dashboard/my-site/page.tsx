@@ -75,17 +75,27 @@ export default function MySitePage() {
       alert('Payment details submitted! Your site is under review.');
       setIsPaymentModalOpen(false);
       // Refresh sites to update status to UNDER_REVIEW
-      window.location.reload(); 
+      await refreshSites(activeSite.id);
     } catch (err: any) {
       alert('Error submitting payment: ' + err.message);
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!activeSite) return;
     if (confirm('⚠️ WARNING: Deleting your site will permanently remove all content, custom configurations, and DNS settings. This cannot be undone! Proceed?')) {
-      // API call to delete
-      router.push('/dashboard');
+      try {
+        await apiFetch(`/sites/${activeSite.id}`, {
+          method: 'DELETE',
+          token: token || undefined
+        });
+        alert('Site deleted successfully.');
+        // Refresh sites to remove the deleted site
+        await refreshSites();
+        router.push('/dashboard');
+      } catch (err: any) {
+        alert('Error deleting site: ' + err.message);
+      }
     }
   };
 

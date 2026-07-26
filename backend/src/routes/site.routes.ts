@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { authenticateToken } from '../middleware/auth.middleware';
 import { validateRequest } from '../middleware/validateRequest';
 import { createSiteSchema, updateSiteSchema } from '../schemas/site.schema';
-import { getSites, checkSlug, createSite, updateSite, publishSite } from '../controllers/site.controller';
+import { getSites, checkSlug, createSite, updateSite, publishSite, deleteSite } from '../controllers/site.controller';
 
 const router = Router();
 
@@ -123,5 +123,25 @@ router.put('/:id', validateRequest(updateSiteSchema), updateSite);
  *         description: Publishing started
  */
 router.post('/:id/publish', publishSite);
+
+/**
+ * @swagger
+ * /api/sites/{id}:
+ *   delete:
+ *     summary: Delete a site
+ *     tags: [Sites]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Site deleted successfully
+ */
+router.delete('/:id', deleteSite);
 
 export default router;

@@ -173,3 +173,26 @@ export const publishSite = async (req: Request, res: Response, next: NextFunctio
     next(error);
   }
 };
+
+export const deleteSite = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user!.userId;
+    const { id } = req.params;
+
+    // Verify ownership
+    const site = await prisma.site.findUnique({ where: { id } });
+    if (!site || site.userId !== userId) {
+      return res.status(404).json({ error: { message: 'Site not found or unauthorized' } });
+    }
+
+    // Delete the site
+    await prisma.site.delete({
+      where: { id },
+    });
+
+    res.status(200).json({ message: 'Site deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
