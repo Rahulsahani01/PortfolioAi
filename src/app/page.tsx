@@ -53,7 +53,7 @@ export default function Home() {
               <span>New: GPT-4o Powered Generation</span>
             </div>
             
-            <h1 className="display-lg heroTitle" style={{ maxWidth: '850px', margin: '0 auto var(--space-lg) auto', color: 'var(--primary-navy)' }}>
+            <h1 className={`display-lg ${styles.heroTitleGrad}`} style={{ maxWidth: '850px', margin: '0 auto var(--space-lg) auto' }}>
               Turn Your Resume Into a Portfolio Website in Minutes
             </h1>
             
@@ -130,11 +130,24 @@ export default function Home() {
                       {plan.name}
                     </h3>
                     
-                    <div className={styles.pricingPriceWrapper}>
-                      <span className={isPro ? styles.priceText : `${styles.priceText} ${styles.priceTextNormal}`}>
-                        {plan.price}
-                      </span>
-                      <span className={styles.pricePeriod}>/{plan.period}</span>
+                    <div style={{ marginBottom: 'var(--space-xl)' }}>
+                      {plan.originalPrice && (
+                        <div style={{ background: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)', color: '#1E1E1E', padding: '4px 10px', borderRadius: '100px', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', display: 'inline-flex', alignItems: 'center', gap: '4px', marginBottom: '12px', boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)' }}>
+                          <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>local_fire_department</span>
+                          Limited Offer
+                        </div>
+                      )}
+                      <div className={styles.pricingPriceWrapper} style={{ marginBottom: 0 }}>
+                        <span className={isPro ? styles.priceText : `${styles.priceText} ${styles.priceTextNormal}`}>
+                          {plan.originalPrice && (
+                            <span style={{ textDecoration: 'line-through', fontSize: '0.6em', marginRight: '8px', color: isPro ? '#a5b4fc' : 'var(--on-surface-variant)', fontWeight: 500 }}>
+                              {plan.originalPrice}
+                            </span>
+                          )}
+                          {plan.price}
+                        </span>
+                        <span className={styles.pricePeriod}>/{plan.period}</span>
+                      </div>
                     </div>
 
                     <ul className={styles.featureList}>
@@ -146,9 +159,11 @@ export default function Home() {
                       ))}
                     </ul>
 
-                    <Link href="/dashboard" className={isPro ? styles.pricingBtnPro : styles.pricingBtn} style={{ textDecoration: 'none', display: 'block', textAlign: 'center' }}>
-                      {plan.ctaText}
-                    </Link>
+                    {plan.id === "free" && (
+                      <Link href="/dashboard" className={isPro ? styles.pricingBtnPro : styles.pricingBtn} style={{ textDecoration: 'none', display: 'block', textAlign: 'center' }}>
+                        {plan.ctaText}
+                      </Link>
+                    )}
                   </div>
                 );
               })}

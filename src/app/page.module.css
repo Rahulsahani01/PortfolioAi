@@ -92,7 +92,9 @@
 }
 
 .pillBadge {
-  display: inline-flex;
+  display: flex;
+  width: max-content;
+  margin: 0 auto var(--space-xl) auto;
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-xs) var(--space-md);
@@ -101,7 +103,6 @@
   color: var(--status-processing-text);
   font-size: 12px;
   font-weight: 600;
-  margin-bottom: var(--space-xl);
   border: 1px solid rgba(217, 119, 6, 0.2);
 }
 
@@ -363,7 +364,7 @@
   align-items: stretch;
   justify-content: center;
   gap: var(--space-xl);
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
@@ -663,6 +664,20 @@
 .footerLinks {
   display: flex;
   gap: var(--space-xl);
+}
+
+.heroSub {
+  color: var(--on-surface-variant);
+}
+
+.heroTitleGrad {
+  background: linear-gradient(135deg, var(--primary-navy) 0%, var(--electric-indigo) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  display: inline-block;
+  line-height: 1.2;
 }
 
 .footerLink {

@@ -13,6 +13,7 @@ export interface PricingPlan {
   features: string[];
   ctaText: string;
   isPopular: boolean;
+  originalPrice?: string;
 }
 
 export interface Template {
@@ -67,22 +68,22 @@ export interface ResumeData {
 
 export const FEATURES: Feature[] = [
   {
-    id: "upload",
-    icon: "upload_file",
-    title: "Upload Resume",
-    description: "Drop your PDF or DOCX resume. Our parser extracts all your experience, skills, and projects in seconds.",
+    id: "setup",
+    icon: "flash_on",
+    title: "Fast & Easy Setup",
+    description: "Simply enter your details and let our platform instantly generate a stunning, professional structure for you.",
   },
   {
     id: "template",
     icon: "palette",
     title: "Pick a Template",
-    description: "Choose from 4 beautifully designed, mobile-responsive layout templates optimized for conversion.",
+    description: "Select from a variety of beautifully designed, mobile-responsive templates tailored to your specific profession.",
   },
   {
     id: "publish",
     icon: "rocket_launch",
     title: "Publish Instantly",
-    description: "Get a custom slug URL on our domain or connect your own custom domain. Hosted on a global fast CDN.",
+    description: "Change templates and update your details on the fly. Your portfolio goes live instantly on our global CDN.",
   },
 ];
 
@@ -102,20 +103,37 @@ export const PRICING_PLANS: PricingPlan[] = [
     isPopular: false,
   },
   {
-    id: "pro",
-    name: "Pro Publishing",
-    price: "₹499",
-    period: "month",
+    id: "pro-6mo",
+    name: "Pro (6 Months)",
+    price: "₹250",
+    originalPrice: "₹499",
+    period: "6 mo",
     features: [
       "Publish to Live URL",
       "Custom Subdomain (name.portfolioai.com)",
-      "Connect Custom Domain",
+      "Premium Layout Templates",
+      "SEO & Analytics Dashboard",
+      "6 Months of Uninterrupted Access",
+    ],
+    ctaText: "Go Pro",
+    isPopular: true,
+  },
+  {
+    id: "pro-1yr",
+    name: "Ultra (1 Year)",
+    price: "₹499",
+    originalPrice: "₹999",
+    period: "year",
+    features: [
+      "Publish to Live URL",
+      "Custom Subdomain (name.portfolioai.com)",
       "Premium Layout Templates",
       "SEO & Analytics Dashboard",
       "Priority Customer Support",
+      "1 Year of Uninterrupted Access",
     ],
     ctaText: "Go Pro Now",
-    isPopular: true,
+    isPopular: false,
   },
 ];
 
