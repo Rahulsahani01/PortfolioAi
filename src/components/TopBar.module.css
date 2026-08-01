@@ -1,0 +1,46 @@
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  background-color: var(--surface-container-lowest);
+  padding: 22px 28px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--outline-variant);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.topBarTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.topBarActions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.iconBtn {
+  background: var(--surface-container-low);
+  border: 1px solid var(--outline-variant);
+  color: var(--on-surface-variant);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.iconBtn:hover {
+  background: var(--surface-container);
+  color: var(--primary-navy);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}

@@ -14,6 +14,12 @@ export default function ActiveSiteBadge({ siteName, status, paymentStatus }: { s
     }}>
       <span className="material-symbols-outlined" style={{ fontSize: '28px', color: 'var(--electric-indigo)' }}>language</span>
       {siteName}
+      {status?.toUpperCase() === 'LIVE' && (
+        <div style={{ backgroundColor: '#d1fae5', color: '#065f46', fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '6px', marginLeft: '8px' }}>
+          <span style={{ width: '6px', height: '6px', backgroundColor: '#059669', borderRadius: '50%' }} />
+          PUBLISHED
+        </div>
+      )}
       {paymentStatus === 'PENDING' && (
         <span style={{
           backgroundColor: '#FFF8E1',
