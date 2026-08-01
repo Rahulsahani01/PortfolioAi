@@ -5,7 +5,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
 import Sidebar from '../../../components/Sidebar';
+import Footer from '../../../components/Footer';
 import PaymentModal from '../../../components/PaymentModal';
+import NotificationDropdown from '../../../components/NotificationDropdown';
+import TopBar from '../../../components/TopBar';
 import { useSites } from '../../../context/SitesContext';
 import { useAuth } from '../../../context/AuthContext';
 import { apiFetch } from '../../../lib/api';
@@ -113,30 +116,11 @@ export default function MySitePage() {
       {/* ── Main Area ─────────────────────────────────────── */}
       <main className={styles.mainArea}>
         {/* Top App Bar */}
-        <header className={styles.topBar}>
-          <div className={styles.topBarTitleGroup}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                {activeSite ? (
-                  <ActiveSiteBadge siteName={activeSite.slug} status={activeSite.status} paymentStatus={activeSite.paymentStatus} />
-                ) : (
-                  <h2 className={styles.topBarTitle} style={{ margin: 0 }}>
-                    My Site Management
-                  </h2>
-                )}
-                {activeSite && activeSite.status === 'Live' && (
-                  <div className={styles.topBarBadge} style={{ backgroundColor: '#d1fae5', color: '#065f46', fontSize: '11px', fontWeight: 700, padding: '4px 12px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ width: '6px', height: '6px', backgroundColor: '#059669', borderRadius: '50%' }} />
-                    PUBLISHED
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className={styles.topBarActions}>
-            
-            {/* Site Switcher Dropdown */}
-            {sites.length > 0 && (
+        <TopBar 
+          title="My Site Management" 
+          showActiveSiteBadge={true} 
+          actions={
+            sites.length > 0 && (
               <select 
                 style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--outline)', outline: 'none', fontWeight: 600, color: 'var(--primary-navy)' }}
                 value={activeSite?.id || ''}
@@ -150,16 +134,9 @@ export default function MySitePage() {
                   <option key={s.id} value={s.id}>{s.slug}</option>
                 ))}
               </select>
-            )}
-
-            <button className={styles.iconBtn}>
-              <span className="material-symbols-outlined">notifications</span>
-            </button>
-            <button className={styles.iconBtn}>
-              <span className="material-symbols-outlined">account_circle</span>
-            </button>
-          </div>
-        </header>
+            )
+          } 
+        />
 
         {/* Canvas */}
         <div className={styles.canvas}>
@@ -368,19 +345,7 @@ export default function MySitePage() {
         </div>
 
         {/* Footer */}
-        <footer className={styles.footer}>
-          <div className={styles.footerInner}>
-            <div className={styles.footerBrand}>
-              <span className={styles.footerBrandName}>PortfolioAI</span>
-              <span className={styles.footerCopy}>© {new Date().getFullYear()} PortfolioAI. All rights reserved.</span>
-            </div>
-            <div className={styles.footerLinks}>
-              <a href="#" className={styles.footerLink}>Privacy Policy</a>
-              <a href="#" className={styles.footerLink}>Terms of Service</a>
-              <a href="#" className={styles.footerLink}>Contact</a>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </main>
 
       {/* ── Payment Modal ─────────────────────────────────────── */}

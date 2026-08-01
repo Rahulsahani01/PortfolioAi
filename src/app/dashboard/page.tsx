@@ -3,8 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import ActiveSiteBadge from '../../components/ActiveSiteBadge';
 import Sidebar from '../../components/Sidebar';
+import Footer from '../../components/Footer';
+import TopBar from '../../components/TopBar';
 import { useSites } from '../../context/SitesContext';
 import { useAuth } from '../../context/AuthContext';
 import { apiFetch } from '../../lib/api';
@@ -76,34 +77,7 @@ export default function UserDashboard() {
       {/* ── Main Area ─────────────────────────────────────── */}
       <main className={styles.mainArea}>
         {/* Top App Bar */}
-        <header className={styles.topBar}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {activeSite ? (
-              <>
-                <ActiveSiteBadge siteName={activeSite.slug} status={activeSite.status} paymentStatus={activeSite.paymentStatus} />
-              </>
-            ) : (
-              <h2 className={styles.topBarTitle}>Dashboard</h2>
-            )}
-          </div>
-
-          <div className={styles.topBarActions}>
-            <div className={styles.searchWrapper}>
-              <span className={`material-symbols-outlined ${styles.searchIcon}`}>search</span>
-              <input
-                className={styles.searchInput}
-                type="text"
-                placeholder="Search portfolios..."
-              />
-            </div>
-            <button className={styles.iconBtn}>
-              <span className="material-symbols-outlined">notifications</span>
-            </button>
-            <button className={styles.iconBtn}>
-              <span className="material-symbols-outlined">account_circle</span>
-            </button>
-          </div>
-        </header>
+        <TopBar title="Dashboard" showActiveSiteBadge={true} />
 
         {/* Dashboard Content */}
         <div className={styles.canvas}>
@@ -141,8 +115,18 @@ export default function UserDashboard() {
                 <p style={{ color: 'var(--on-surface-variant)', margin: '0 0 24px 0', fontSize: '14px', textAlign: 'center' }}>You can build and manage multiple portfolios for different use-cases.</p>
                 <button 
                   className={styles.bigCreateBtn} 
-                  onClick={openCreateWizard}
-                  style={{ cursor: 'pointer', width: 'auto', display: 'inline-flex' }}
+                  onClick={() => {
+                    if (sites.length >= 10) return;
+                    openCreateWizard();
+                  }}
+                  disabled={sites.length >= 10}
+                  title={sites.length >= 10 ? "You have reached the maximum limit of 10 sites. Please delete an existing site to create a new one." : undefined}
+                  style={{ 
+                    cursor: sites.length >= 10 ? 'not-allowed' : 'pointer', 
+                    width: 'auto', 
+                    display: 'inline-flex',
+                    opacity: sites.length >= 10 ? 0.5 : 1
+                  }}
                 >
                   <span className="material-symbols-outlined">add_circle</span>
                   Create New Site
@@ -155,7 +139,7 @@ export default function UserDashboard() {
 
               {/* Grid Layout for Cards */}
               <div className={styles.statusGrid}>
-                {sites.map(site => (
+                {[...sites].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map(site => (
                   <div key={site.id} className={styles.statusCard}
                     style={{ 
                       backgroundColor: activeSiteId === site.id ? '#e1e0ff' : 'var(--surface-container-lowest)',
@@ -202,16 +186,7 @@ export default function UserDashboard() {
         </div>
 
         {/* Footer */}
-        <footer className={styles.footer}>
-          <div className={styles.footerInner}>
-            <p className={styles.footerCopy}>© {new Date().getFullYear()} PortfolioAI. All rights reserved.</p>
-            <div className={styles.footerLinks}>
-              <a href="#" className={styles.footerLink}>Privacy Policy</a>
-              <a href="#" className={styles.footerLink}>Terms of Service</a>
-              <a href="#" className={styles.footerLink}>Contact</a>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </main>
 
       {/* ── CREATE SITE MODAL WIZARD ───────────────────── */}

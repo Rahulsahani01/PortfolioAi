@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
 import Sidebar from '../../../components/Sidebar';
+import TopBar from '../../../components/TopBar';
 import { useSites } from '../../../context/SitesContext';
 import { useAuth } from '../../../context/AuthContext';
 import { apiFetch } from '../../../lib/api';
@@ -28,6 +29,7 @@ export default function TemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [selectedId, setSelectedId] = useState<string>('modern-dev');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetch('/api/templates')
@@ -102,6 +104,12 @@ export default function TemplatesPage() {
 
   const selectedTemplate = templates.find(t => t.id === selectedId) || templates[0];
 
+  const filteredTemplates = templates.filter(t => 
+    t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    t.description.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    t.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
   return (
     <div className={styles.shell}>
       {/* ── Sidebar ───────────────────────────────────────── */}
@@ -110,33 +118,22 @@ export default function TemplatesPage() {
       {/* ── Main Area ─────────────────────────────────────── */}
       <main className={styles.mainArea}>
         {/* Top Bar */}
-        <header className={styles.topBar}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {activeSiteName ? (
-              <>
-                <ActiveSiteBadge siteName={activeSiteName} status={activeSiteStatus} paymentStatus={activeSite?.paymentStatus} />
-              </>
-            ) : (
-              <h2 className={styles.topBarTitle} style={{ margin: 0 }}>Select a Template</h2>
-            )}
-          </div>
-          <div className={styles.topBarActions}>
+        <TopBar 
+          title="Select a Template" 
+          showActiveSiteBadge={true} 
+          actions={
             <div className={styles.searchWrapper}>
               <span className={`material-symbols-outlined ${styles.searchIcon}`}>search</span>
               <input
                 className={styles.searchInput}
                 type="text"
                 placeholder="Search templates..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <button className={styles.iconBtn}>
-              <span className="material-symbols-outlined">notifications</span>
-            </button>
-            <button className={styles.iconBtn}>
-              <span className="material-symbols-outlined">account_circle</span>
-            </button>
-          </div>
-        </header>
+          }
+        />
 
         {/* Content Canvas */}
         <div className={styles.canvas}>
@@ -146,8 +143,9 @@ export default function TemplatesPage() {
 
           {/* Grid */}
           <div className={styles.grid}>
-            {templates.map(template => {
-              const isSelected = template.id === selectedId;
+            {filteredTemplates.length > 0 ? (
+              filteredTemplates.map(template => {
+                const isSelected = template.id === selectedId;
               return (
                 <div
                   key={template.id}
@@ -224,7 +222,12 @@ export default function TemplatesPage() {
                   </div>
                 </div>
               );
-            })}
+            })
+            ) : (
+              <div style={{ padding: '40px', gridColumn: '1 / -1', textAlign: 'center', color: 'var(--on-surface-variant)' }}>
+                No templates found matching "{searchQuery}"
+              </div>
+            )}
           </div>
         </div>
 

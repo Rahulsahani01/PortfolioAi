@@ -68,7 +68,7 @@ export const SitesProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(true);
       const endpoint = siteId ? `/sites?siteId=${siteId}` : '/sites';
       const data = await apiFetch(endpoint, { token });
-      const sitesArray = data.sites || [];
+      const sitesArray = (data.sites || []).sort((a: Site, b: Site) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       
       if (siteId) {
         if (sitesArray.length > 0) {

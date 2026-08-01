@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../../../components/Sidebar';
 import ActiveSiteBadge from '../../../components/ActiveSiteBadge';
+import Footer from '../../../components/Footer';
+import TopBar from '../../../components/TopBar';
 import { useSites } from '../../../context/SitesContext';
 import { useAuth } from '../../../context/AuthContext';
 import { apiFetch } from '../../../lib/api';
@@ -74,25 +76,7 @@ export default function PricingPage() {
       <Sidebar styles={styles} activePath="/dashboard/pricing" />
 
       <main className={styles.mainArea}>
-        <header className={styles.topBar}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {activeSite ? (
-              <>
-                <ActiveSiteBadge siteName={activeSite.slug} status={activeSite.status} paymentStatus={activeSite.paymentStatus} />
-              </>
-            ) : (
-              <h2 className={styles.topBarTitle}>Pricing</h2>
-            )}
-          </div>
-          <div className={styles.topBarActions}>
-            <button className={styles.iconBtn}>
-              <span className="material-symbols-outlined">notifications</span>
-            </button>
-            <button className={styles.iconBtn}>
-              <span className="material-symbols-outlined">account_circle</span>
-            </button>
-          </div>
-        </header>
+        <TopBar title="Pricing" showActiveSiteBadge={true} />
 
         <div className={styles.canvas}>
           <div className={styles.pricingContainer}>
@@ -243,6 +227,9 @@ export default function PricingPage() {
 
           </div>
         </div>
+
+        {/* Footer */}
+        <Footer />
       </main>
     </div>
   );

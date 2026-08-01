@@ -9,6 +9,7 @@ import Sidebar from '../../../components/Sidebar';
 import EducationModal from '../../../components/EducationModal';
 import ExperienceModal from '../../../components/ExperienceModal';
 import ProjectModal from '../../../components/ProjectModal';
+import TopBar from '../../../components/TopBar';
 import { useSites } from '../../../context/SitesContext';
 import { useAuth } from '../../../context/AuthContext';
 import { apiFetch } from '../../../lib/api';
@@ -230,25 +231,7 @@ export default function ResumePage() {
       {/* ── Main ─────────────────────────────────────────── */}
       <main className={styles.mainArea}>
         {/* Top Bar */}
-        <header className={styles.topBar}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {activeSiteName ? (
-              <>
-                <ActiveSiteBadge siteName={activeSiteName} status={activeSiteStatus} paymentStatus={activeSite?.paymentStatus} />
-              </>
-            ) : (
-              <h2 className={styles.topBarTitle}>Site Details</h2>
-            )}
-          </div>
-          <div className={styles.topBarActions}>
-            <button className={styles.iconBtn}>
-              <span className="material-symbols-outlined">notifications</span>
-            </button>
-            <button className={styles.iconBtn}>
-              <span className="material-symbols-outlined">account_circle</span>
-            </button>
-          </div>
-        </header>
+        <TopBar title="Site Details" showActiveSiteBadge={true} />
 
         {/* Content Canvas */}
         <div className={styles.canvas}>

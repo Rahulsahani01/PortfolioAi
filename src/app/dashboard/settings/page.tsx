@@ -3,17 +3,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Sidebar from '../../../components/Sidebar';
+import Footer from '../../../components/Footer';
+import TopBar from '../../../components/TopBar';
 import styles from './page.module.css';
 
 export default function SettingsPage() {
   const [activeTheme, setActiveTheme] = useState<'light' | 'dark'>('light');
   const [emailUpdates, setEmailUpdates] = useState(true);
   const [securityAlerts] = useState(true); // read-only check box as in Stitch
-
-  // Profile Form States
-  const [fullName, setFullName] = useState('Alexander Morgan');
-  const [email, setEmail] = useState('alex.morgan@portfolio.ai');
-  const [bio, setBio] = useState('Product Designer & Tech Enthusiast building digital experiences for the next generation of creators.');
+  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "support@portfolio.ai";
 
   // Password States
   const [currentPassword, setCurrentPassword] = useState('');
@@ -29,9 +27,6 @@ export default function SettingsPage() {
     setTimeout(() => setShowToast(false), 4000);
   };
 
-  const handleSaveProfile = () => {
-    triggerToast('🎉 Profile information updated successfully!');
-  };
 
   const handleChangePassword = () => {
     if (!currentPassword || !newPassword) {
@@ -58,25 +53,7 @@ export default function SettingsPage() {
       {/* ── Main Area ─────────────────────────────────────── */}
       <main className={styles.mainArea}>
         {/* Top App Bar */}
-        <header className={styles.topBar}>
-          <h2 className={styles.topBarTitle}>Settings</h2>
-          <div className={styles.topBarActions}>
-            <div className={styles.searchWrapper}>
-              <span className={`material-symbols-outlined ${styles.searchIcon}`}>search</span>
-              <input
-                className={styles.searchInput}
-                type="text"
-                placeholder="Search settings..."
-              />
-            </div>
-            <button className={styles.iconBtn}>
-              <span className="material-symbols-outlined">notifications</span>
-            </button>
-            <button className={styles.iconBtn}>
-              <span className="material-symbols-outlined">account_circle</span>
-            </button>
-          </div>
-        </header>
+        <TopBar title="Settings" />
 
         {/* Content Canvas */}
         <div className={styles.canvas}>
@@ -107,108 +84,19 @@ export default function SettingsPage() {
 
           {/* Settings Grid Layout */}
           <div className={styles.settingsGrid}>
-            {/* Profile Section */}
-            <section className={`${styles.sectionCard} ${styles.colSpan8}`}>
+            {/* Contact Us Section */}
+            <section className={styles.sectionCard} style={{ gridColumn: 'span 12' }}>
               <div className={styles.cardHeader}>
                 <h3 className={styles.cardTitle}>
-                  <span className={`material-symbols-outlined ${styles.cardIcon}`}>person</span>
-                  Profile Information
+                  <span className={`material-symbols-outlined ${styles.cardIcon}`}>contact_support</span>
+                  Contact Us
                 </h3>
-                <button className={styles.saveChangesBtn} onClick={handleSaveProfile}>
-                  Save Changes
-                </button>
               </div>
-
               <div className={styles.profileContainer}>
-                <div className={styles.avatarWrapper}>
-                  <div
-                    style={{
-                      width: '128px',
-                      height: '128px',
-                      borderRadius: '50%',
-                      backgroundColor: '#cbd5e1',
-                      border: '4px solid var(--surface-container-high)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#475569',
-                      fontSize: '32px',
-                      fontWeight: '700'
-                    }}
-                  >
-                    AM
-                  </div>
-                  <button className={styles.avatarEditBtn} onClick={() => alert('Feature to upload new avatar is coming soon!')}>
-                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>edit</span>
-                  </button>
-                </div>
-
-                <div className={styles.formGrid}>
-                  <div className={styles.field}>
-                    <label className={styles.label}>Full Name</label>
-                    <input
-                      className={styles.input}
-                      type="text"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                    />
-                  </div>
-                  <div className={styles.field}>
-                    <label className={styles.label}>Email Address</label>
-                    <input
-                      className={styles.input}
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className={`${styles.field} ${styles.colSpan2}`}>
-                    <label className={styles.label}>Professional Bio</label>
-                    <textarea
-                      className={styles.textarea}
-                      rows={3}
-                      value={bio}
-                      onChange={(e) => setBio(e.target.value)}
-                    />
-                  </div>
-                </div>
+                <p style={{ color: 'var(--on-surface-variant)', fontSize: '15px', lineHeight: '1.6' }}>
+                  If you have any questions, require technical support, or want to explore enterprise options, please don't hesitate to reach out. You can contact our dedicated support team directly at <a href={`mailto:${contactEmail}`} style={{ color: 'var(--primary-navy)', fontWeight: 600, textDecoration: 'underline' }}>{contactEmail}</a>.
+                </p>
               </div>
-            </section>
-
-            {/* Plan Details Section */}
-            <section className={`${styles.sectionCard} ${styles.colSpan4}`}>
-              <h3 className={styles.cardTitle} style={{ marginBottom: '24px' }}>
-                <span className={`material-symbols-outlined ${styles.cardIcon}`}>verified</span>
-                Plan Details
-              </h3>
-
-              <div className={styles.planBox}>
-                <div className={styles.planHeader}>
-                  <span className={styles.planBadge}>PREMIUM PLAN</span>
-                  <span className={styles.planPrice}>
-                    $19<span className={styles.pricePeriod}>/mo</span>
-                  </span>
-                </div>
-                <p className={styles.billingDate}>Your next billing date is April 24, 2024.</p>
-                <ul className={styles.featuresList}>
-                  <li className={styles.featureItem}>
-                    <span className={`material-symbols-outlined ${styles.featureIcon}`}>check_circle</span>
-                    Unlimited Portfolio Sites
-                  </li>
-                  <li className={styles.featureItem}>
-                    <span className={`material-symbols-outlined ${styles.featureIcon}`}>check_circle</span>
-                    AI-Powered Resume Builder
-                  </li>
-                  <li className={styles.featureItem}>
-                    <span className={`material-symbols-outlined ${styles.featureIcon}`}>check_circle</span>
-                    Custom Domains
-                  </li>
-                </ul>
-              </div>
-
-              <button className={styles.manageBillingBtn} onClick={() => triggerToast('💳 Opening billing portal...')}>
-                Manage Billing
-              </button>
             </section>
 
             {/* Preferences Section */}
@@ -219,30 +107,7 @@ export default function SettingsPage() {
               </h3>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                {/* Theme Selector */}
-                <div className={styles.preferenceItem}>
-                  <div className={styles.prefInfo}>
-                    <span className={styles.prefTitle}>Appearance</span>
-                    <span className={styles.prefDesc}>Choose how PortfolioAI looks to you.</span>
-                  </div>
 
-                  <div className={styles.themeSelector}>
-                    <button
-                      className={`${styles.themeBtn} ${activeTheme === 'light' ? styles.themeBtnActive : ''}`}
-                      onClick={() => setActiveTheme('light')}
-                    >
-                      <span className={`material-symbols-outlined ${styles.themeIcon}`}>light_mode</span>
-                      <span>Light</span>
-                    </button>
-                    <button
-                      className={`${styles.themeBtn} ${activeTheme === 'dark' ? styles.themeBtnActive : ''}`}
-                      onClick={() => setActiveTheme('dark')}
-                    >
-                      <span className={`material-symbols-outlined ${styles.themeIcon}`}>dark_mode</span>
-                      <span>Dark</span>
-                    </button>
-                  </div>
-                </div>
 
                 <hr className={styles.divider} style={{ margin: '0' }} />
 
@@ -341,19 +206,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Footer */}
-        <footer className={styles.footer}>
-          <div className={styles.footerInner}>
-            <div className={styles.footerBrand}>
-              <span className={styles.footerBrandName}>PortfolioAI</span>
-              <span className={styles.footerCopy}>© {new Date().getFullYear()} PortfolioAI. All rights reserved.</span>
-            </div>
-            <div className={styles.footerLinks}>
-              <a href="#" className={styles.footerLink}>Privacy Policy</a>
-              <a href="#" className={styles.footerLink}>Terms of Service</a>
-              <a href="#" className={styles.footerLink}>Contact</a>
-            </div>
-          </div>
-        </footer>
+        <Footer />
       </main>
     </div>
   );
