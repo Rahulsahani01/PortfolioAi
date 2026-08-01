@@ -5,44 +5,53 @@
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>{{name}} | QA Automation Engineer</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Roboto Mono', sans-serif; }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>body { font-family: 'Roboto Mono', sans-serif; }</style>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-white text-gray-700">
+<body class="bg-white text-gray-700 flex flex-col md:flex-row min-h-screen">
   
-  <header class="bg-emerald-600 text-white py-20 px-8 text-center relative overflow-hidden">
-    <div class="max-w-4xl mx-auto relative z-10">
+  <!-- Sidebar -->
+  <aside class="bg-emerald-600 text-white md:w-80 p-8 flex flex-col justify-between shrink-0">
+    <div>
       {{#if profilePhoto}}
-      <img src="{{profilePhoto}}" alt="{{name}}" class="w-32 h-32 mx-auto rounded-full mb-6 border-4 border-white/20 object-cover shadow-xl">
+      <img src="{{profilePhoto}}" alt="{{name}}" class="w-32 h-32 rounded-full border-4 border-white/20 mb-6 object-cover shadow-lg">
       {{/if}}
-      <h1 class="text-5xl font-extrabold tracking-tight mb-4">{{name}}</h1>
-      <p class="text-2xl font-semibold opacity-90 mb-8">{{title}}</p>
-      <p class="max-w-2xl mx-auto text-lg leading-relaxed opacity-80">{{summary}}</p>
+      <h1 class="text-3xl font-bold mb-2">{{name}}</h1>
+      <p class="text-lg opacity-90 mb-6">{{title}}</p>
       
-      <div class="mt-8 flex flex-wrap justify-center gap-4 text-sm font-medium opacity-80">
-        {{#if contact.email}}<span>{{contact.email}}</span>{{/if}}
-        {{#if contact.location}}<span>{{contact.location}}</span>{{/if}}
+      <div class="space-y-2 text-sm opacity-80 mb-10">
+        {{#if contact.email}}<p class="flex items-center gap-2">✉ {{contact.email}}</p>{{/if}}
+        {{#if contact.phone}}<p class="flex items-center gap-2">☎ {{contact.phone}}</p>{{/if}}
+        {{#if contact.location}}<p class="flex items-center gap-2">📍 {{contact.location}}</p>{{/if}}
       </div>
     </div>
-  </header>
-  
-  <main class="max-w-5xl mx-auto px-6 py-20 space-y-24">
     
+    <div class="text-xs opacity-50 mt-10">
+      &copy; {{name}}. Professional Profile.
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-grow p-8 md:p-12 lg:p-16 max-w-5xl space-y-16">
+    
+    <section>
+      <h2 class="text-2xl font-bold mb-4 border-b pb-2 uppercase tracking-wide opacity-80">Professional Summary</h2>
+      <p class="text-lg leading-relaxed opacity-90">{{summary}}</p>
+    </section>
+
     {{#if experience.length}}
     <section>
-      <h2 class="text-3xl font-bold mb-10 text-emerald-600 uppercase tracking-wider text-center">Experience</h2>
-      <div class="space-y-8">
+      <h2 class="text-2xl font-bold mb-6 border-b pb-2 uppercase tracking-wide opacity-80">Experience</h2>
+      <div class="space-y-6">
         {{#each experience}}
-        <div class="p-8 border-l-4 border-emerald-500 bg-gray-50 p-4">
-          <div class="flex flex-col md:flex-row justify-between mb-4">
+        <div class="p-6 border-l-4 border-emerald-500 bg-gray-50 transition hover:shadow-md">
+          <div class="flex flex-col sm:flex-row justify-between mb-2">
             <h3 class="text-xl font-bold">{{this.role}}</h3>
-            <span class="font-semibold opacity-70">{{this.duration}}</span>
+            <span class="text-sm font-semibold px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-600 dark:text-gray-300">{{this.duration}}</span>
           </div>
-          <p class="text-emerald-600 font-bold mb-4">{{this.company}}</p>
-          <p class="opacity-80 leading-relaxed">{{this.description}}</p>
+          <p class="text-lg font-medium mb-4 opacity-75">{{this.company}}</p>
+          <p class="opacity-80">{{this.description}}</p>
         </div>
         {{/each}}
       </div>
@@ -51,16 +60,16 @@
 
     {{#if projects.length}}
     <section>
-      <h2 class="text-3xl font-bold mb-10 text-emerald-600 uppercase tracking-wider text-center">Projects</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <h2 class="text-2xl font-bold mb-6 border-b pb-2 uppercase tracking-wide opacity-80">Key Initiatives</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {{#each projects}}
-        <div class="p-8 border-l-4 border-emerald-500 bg-gray-50 p-4 flex flex-col">
-          <h3 class="text-xl font-bold mb-3">{{this.title}}</h3>
-          <p class="opacity-80 leading-relaxed mb-6 flex-grow">{{this.description}}</p>
+        <div class="p-6 border-l-4 border-emerald-500 bg-gray-50">
+          <h3 class="text-lg font-bold mb-3">{{this.title}}</h3>
+          <p class="opacity-80 text-sm mb-4">{{this.description}}</p>
           {{#if this.technologies}}
-          <div class="flex flex-wrap gap-2 mt-4">
+          <div class="flex flex-wrap gap-1">
             {{#each this.technologies}}
-            <span class="text-xs font-semibold bg-black/5 dark:bg-white/10 px-3 py-1 rounded-full">{{this}}</span>
+            <span class="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">{{this}}</span>
             {{/each}}
           </div>
           {{/if}}
@@ -73,10 +82,10 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
       {{#if skills.length}}
       <section>
-        <h2 class="text-2xl font-bold mb-8 text-emerald-600 uppercase tracking-wider">Skills</h2>
-        <div class="flex flex-wrap gap-3">
+        <h2 class="text-xl font-bold mb-4 border-b pb-2 uppercase tracking-wide opacity-80">Core Competencies</h2>
+        <div class="flex flex-wrap gap-2">
           {{#each skills}}
-          <span class="px-4 py-2 border-l-4 border-emerald-500 bg-gray-50 p-4 font-medium text-sm">{{this}}</span>
+          <span class="px-3 py-1 text-sm font-medium border-l-4 border-emerald-500 bg-gray-50">{{this}}</span>
           {{/each}}
         </div>
       </section>
@@ -84,24 +93,20 @@
 
       {{#if education.length}}
       <section>
-        <h2 class="text-2xl font-bold mb-8 text-emerald-600 uppercase tracking-wider">Education</h2>
-        <div class="space-y-6">
+        <h2 class="text-xl font-bold mb-4 border-b pb-2 uppercase tracking-wide opacity-80">Education</h2>
+        <div class="space-y-4">
           {{#each education}}
-          <div class="p-6 border-l-4 border-emerald-500 bg-gray-50 p-4">
-            <h3 class="font-bold text-lg mb-1">{{this.degree}}</h3>
-            <p class="opacity-80 mb-2">{{this.institution}}</p>
-            <p class="text-sm font-semibold opacity-60">{{this.duration}}</p>
+          <div>
+            <h3 class="font-bold">{{this.degree}}</h3>
+            <p class="opacity-80 text-sm">{{this.institution}} &bull; {{this.duration}}</p>
           </div>
           {{/each}}
         </div>
       </section>
       {{/if}}
     </div>
+
   </main>
-  
-  <footer class="py-12 text-center opacity-50 text-sm font-medium border-t border-black/10 dark:border-white/10">
-    <p>&copy; {{name}} - QA Automation Engineer</p>
-  </footer>
   <script src="script.js"></script>
 </body>
 </html>
