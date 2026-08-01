@@ -1,12 +1,26 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { FEATURES, PRICING_PLANS } from '../data/portfolioData';
 import styles from './page.module.css';
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handlePlayDemo = () => {
+    if (videoRef.current) {
+      // Toggle play/pause if clicked directly, but if coming from "View Demo", just play it
+      if (videoRef.current.paused) {
+        videoRef.current.play();
+      } else {
+        videoRef.current.pause();
+      }
+      // Scroll smoothly to the video if it's not fully in view
+      videoRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -65,7 +79,7 @@ export default function Home() {
               <Link href="/dashboard" className={styles.btnPrimary} style={{ textDecoration: 'none', display: 'inline-block', textAlign: 'center' }}>
                 Get Started Free
               </Link>
-              <button className={styles.btnSecondary} onClick={() => alert('Demo is loading...')}>View Demo</button>
+              <button className={styles.btnSecondary} onClick={handlePlayDemo}>View Demo</button>
             </div>
           </div>
 
@@ -80,7 +94,15 @@ export default function Home() {
         <section className={styles.previewSection}>
           <div className={styles.previewContainer}>
             <div className={styles.previewWrapper}>
-              <img src="/dashboard_preview.png" alt="SaaS Dashboard Preview" className={styles.previewImage} />
+              <video 
+                ref={videoRef}
+                src="/video.mp4" 
+                controls
+                loop 
+                playsInline 
+                className={styles.previewImage}
+                style={{ cursor: 'pointer' }}
+              />
               <div className={styles.previewOverlay}></div>
             </div>
           </div>

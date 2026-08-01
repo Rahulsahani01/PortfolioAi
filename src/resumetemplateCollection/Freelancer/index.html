@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>{{name}} | Independent Consultant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'DM Sans', sans-serif; }
+    .bg-teal-gradient { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); }
+  </style>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50 text-gray-800">
+  
+  <header class="bg-teal-gradient text-white py-24 px-6 text-center">
+    <div class="max-w-3xl mx-auto">
+      {{#if profilePhoto}}
+      <img src="{{profilePhoto}}" alt="{{name}}" class="w-32 h-32 mx-auto rounded-full mb-8 border-4 border-teal-300 shadow-xl object-cover">
+      {{/if}}
+      <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-4">{{name}}</h1>
+      <p class="text-xl md:text-2xl text-teal-100 font-medium mb-8">{{title}}</p>
+      <div class="flex flex-wrap justify-center gap-4 text-sm font-semibold">
+        <a href="#contact" class="bg-white text-teal-700 px-8 py-3 rounded-full hover:bg-teal-50 transition-colors shadow-lg">Hire Me</a>
+        {{#if social.linkedin}}<a href="{{social.linkedin}}" class="bg-teal-700 text-white border border-teal-500 px-8 py-3 rounded-full hover:bg-teal-600 transition-colors">LinkedIn</a>{{/if}}
+      </div>
+    </div>
+  </header>
+  
+  <main class="max-w-5xl mx-auto px-6 py-20 space-y-24">
+    
+    <section class="text-center max-w-3xl mx-auto">
+      <h2 class="text-teal-700 font-bold uppercase tracking-widest mb-4">About Me</h2>
+      <p class="text-xl leading-relaxed text-gray-600">{{summary}}</p>
+    </section>
+
+    {{#if skills.length}}
+    <section>
+      <h2 class="text-teal-700 font-bold uppercase tracking-widest mb-8 text-center">Services & Expertise</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        {{#each skills}}
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+          <span class="text-gray-800 font-semibold">{{this}}</span>
+        </div>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if projects.length}}
+    <section>
+      <h2 class="text-teal-700 font-bold uppercase tracking-widest mb-8 text-center">Selected Client Work</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {{#each projects}}
+        <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 group">
+          <h3 class="text-2xl font-bold text-gray-900 mb-3 group-hover:text-teal-600 transition-colors">{{this.title}}</h3>
+          <p class="text-gray-600 leading-relaxed mb-6">{{this.description}}</p>
+          {{#if this.technologies}}
+          <div class="flex flex-wrap gap-2 mt-auto">
+            {{#each this.technologies}}
+            <span class="text-xs bg-teal-50 text-teal-700 font-medium px-3 py-1 rounded-full">{{this}}</span>
+            {{/each}}
+          </div>
+          {{/if}}
+        </div>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if experience.length}}
+    <section>
+      <h2 class="text-teal-700 font-bold uppercase tracking-widest mb-12 text-center">Work History</h2>
+      <div class="max-w-3xl mx-auto space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
+        {{#each experience}}
+        <div class="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+          <div class="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-teal-100 text-teal-600 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+          </div>
+          <div class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+            <div class="flex items-center justify-between space-x-2 mb-1">
+              <div class="font-bold text-gray-900">{{this.role}}</div>
+              <time class="font-medium text-teal-600 text-sm">{{this.duration}}</time>
+            </div>
+            <div class="text-gray-500 font-medium mb-3">{{this.company}}</div>
+            <div class="text-gray-600 leading-relaxed text-sm">{{this.description}}</div>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+  </main>
+  
+  <footer id="contact" class="bg-teal-900 text-white py-16 text-center">
+    <h2 class="text-3xl font-bold mb-6">Let's Build Something Great</h2>
+    <p class="text-teal-200 mb-8 max-w-xl mx-auto">Available for freelance opportunities and consulting engagements.</p>
+    {{#if contact.email}}
+    <a href="mailto:{{contact.email}}" class="bg-white text-teal-900 px-10 py-4 rounded-full font-bold hover:bg-teal-50 transition-colors shadow-xl">Email Me</a>
+    {{/if}}
+    <p class="mt-16 text-teal-500 text-sm">&copy; {{name}}.</p>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>

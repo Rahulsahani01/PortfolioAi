@@ -1,0 +1,58 @@
+{
+  "name": "Jane Doe",
+  "title": "Full-Stack Cloud Architect",
+  "summary": "Crafting high-performance distributed systems and elegant user experiences. Specializing in React, Go, and AWS cloud-native architecture.",
+  "profilePhoto": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=256&h=256&auto=format&fit=crop",
+  "contact": {
+    "email": "jane.doe@example.com",
+    "phone": "+1 555-0198",
+    "location": "San Francisco, CA"
+  },
+  "social": {
+    "github": "https://github.com/janedoe",
+    "linkedin": "https://linkedin.com/in/janedoe",
+    "twitter": "https://twitter.com/janedoe",
+    "portfolioUrl": "https://janedoe.dev",
+    "leetcode": "https://leetcode.com/janedoe",
+    "hackerrank": "https://hackerrank.com/janedoe"
+  },
+  "resumeUrl": "https://example.com/resume.pdf",
+  "skills": ["React", "TypeScript", "Node.js", "Go", "AWS", "Docker", "Kubernetes", "PostgreSQL"],
+  "experience": [
+    {
+      "company": "TechFusion Inc",
+      "role": "Senior Cloud Engineer",
+      "description": "Led the migration of legacy monolithic services to a microservices architecture on AWS. Improved system resilience and reduced deployment times by 40%.",
+      "technologies": ["AWS", "Kubernetes", "Go", "React"]
+    },
+    {
+      "company": "Innovate Software Solutions",
+      "role": "Full-Stack Developer",
+      "description": "Developed and maintained highly scalable web applications for enterprise clients. Integrated complex third-party APIs and modernized frontend infrastructure.",
+      "technologies": ["React", "Node.js", "TypeScript", "MongoDB"]
+    }
+  ],
+  "education": [
+    {
+      "institution": "University of Technology",
+      "degree": "B.S.",
+      "fieldOfStudy": "Computer Science"
+    }
+  ],
+  "projects": [
+    {
+      "name": "CloudOps Automation CLI",
+      "description": "A cross-platform CLI tool for automating AWS deployments and infrastructure provisioning. Adopted by over 50 internal development teams.",
+      "techStack": ["Go", "AWS SDK", "Cobra"],
+      "liveUrl": "https://github.com/janedoe/cloudops-cli",
+      "githubUrl": "https://github.com/janedoe/cloudops-cli"
+    },
+    {
+      "name": "Nexus Dashboard",
+      "description": "A real-time analytics dashboard for monitoring distributed systems. Features interactive charts and low-latency WebSocket data streams.",
+      "techStack": ["React", "TypeScript", "D3.js", "WebSockets"],
+      "liveUrl": "https://nexus-dashboard-demo.com",
+      "githubUrl": "https://github.com/janedoe/nexus-dashboard"
+    }
+  ]
+}
