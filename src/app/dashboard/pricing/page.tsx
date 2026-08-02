@@ -105,7 +105,8 @@ export default function PricingPage() {
                   ₹{prices.sixMo}
                 </h4>
               </div>
-              <div className={styles.pricingCard} style={{ borderColor: 'var(--electric-indigo)', boxShadow: 'var(--shadow-level-3)' }}>
+              <div className={styles.pricingCard} style={{ borderColor: 'var(--electric-indigo)', boxShadow: 'var(--shadow-level-3)', position: 'relative' }}>
+                <div style={{ position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)', backgroundColor: 'var(--electric-indigo)', color: 'white', padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '1px', zIndex: 1 }}>POPULAR</div>
                 <span className={styles.pricingDuration}>1 Year</span>
                 <h4 className={styles.pricingPrice}>
                   {isOfferUnlocked && (

@@ -10,7 +10,7 @@ export const getPendingPayments = async (req: Request, res: Response, next: Next
         providerId: { not: null },
       },
       include: {
-        user: { select: { email: true, name: true } },
+        user: { select: { email: true } },
       },
       orderBy: { createdAt: 'asc' },
     });
